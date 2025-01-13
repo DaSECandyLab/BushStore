@@ -82,3 +82,11 @@ You can run `run_db_bench.sh` directly and it will generate the output directory
 ```
 ./run_db_bench.sh
 ```
+
+# 测试须知
+
+ - 记得修改CMakeLists.txt里的CMAKE_C_COMPILER和CMAKE_CXX_COMPILER，需要支持C++17
+
+ - 记得修改ycsbc文件夹里所有makefile的CC，需要与CMakeLists.txt里用的g++位置一样
+
+ - 修改options.h和global.h的文件调整选项

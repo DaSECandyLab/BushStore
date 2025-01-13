@@ -116,7 +116,7 @@ static double FLAGS_gc_ratio = 0.5;
 
 // Bloom filter bits per key.
 // Negative means use default settings.
-static int FLAGS_bloom_bits = 16;
+static int FLAGS_bloom_bits = 10;
 
 // Common key prefix length.
 static int FLAGS_key_prefix = 0;

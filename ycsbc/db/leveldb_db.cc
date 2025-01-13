@@ -27,17 +27,16 @@ namespace ycsbc {
         options->create_if_missing = true;
         options->compression = leveldb::kNoCompression;
 
-        std::string pm_path = props.GetProperty("pmpath","/tmp/test-leveldb");
+        std::string pm_path = props.GetProperty("pmpath","/home/guoteng_20241228_135/pmem1");
         options->pm_path_ = pm_path;
         options->flush_ssd = utils::StrToBool(props["flushssd"]);
         if(options->flush_ssd){
-            options->pm_size_ = 16ULL * 1024 * 1024 * 1024;
+            options->pm_size_ = 8ULL * 1024 * 1024 * 1024;
         }
-        options->filter_policy = leveldb::NewBloomFilterPolicy(16);
+        options->filter_policy = leveldb::NewBloomFilterPolicy(10);
         // printf("set MioDB options!\n");
         // options->nvm_node = 0;
         // options->nvm_next_node = -1;
-        
     }
 
     int LevelDB::Read(const std::string &table, const std::string &key, const std::vector<std::string> *fields,

@@ -1,4 +1,4 @@
-CC=g++
+CC=/usr/local/bin/g++
 CFLAGS=-std=c++17 -c -g -o2 -Wall -fgnu-tm -I../../include/
 INCLUDES=-I../
 SOURCES=$(wildcard *.cc)

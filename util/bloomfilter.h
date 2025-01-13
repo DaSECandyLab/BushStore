@@ -65,7 +65,7 @@ static uint32_t MurMurHash2(const char* c, size_t size){
 
 class BloomFilterPolicy final {
  public:
-  explicit BloomFilterPolicy(int bits_per_key = 16) : bits_per_key_(bits_per_key) {
+  explicit BloomFilterPolicy(int bits_per_key = 10) : bits_per_key_(bits_per_key) {
     // We intentionally round down to reduce probing cost a little bit
     k_ = static_cast<size_t>(bits_per_key * 0.69);  // 0.69 =~ ln(2)
     if (k_ < 1) k_ = 1;
@@ -210,7 +210,7 @@ class BloomFilterPolicy final {
   // the specified number of bits per key.  A good value for bits_per_key
   // is 10, which yields a filter with ~ 1% false positive rate.
  private:
-  size_t bits_per_key_ = 16;
+  size_t bits_per_key_ = 10;
   size_t k_;
   size_t bits_;
   char* array_ = nullptr;

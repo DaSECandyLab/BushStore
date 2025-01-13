@@ -14,13 +14,13 @@
 namespace leveldb {
 constexpr int VPAGE_CAPACITY = 512 * 1024;
 constexpr int FLUSH_SIZE = 16 * 1024;
-constexpr bool NEW_WAL = true;
+constexpr bool NEW_WAL = false;
 constexpr int MAX_FILE_NUM = 2;
 constexpr int MAX_BNODE_NUM = 150;
-constexpr int TASK_COUNT = 64;
+constexpr int TASK_COUNT = 2;
 constexpr int max_size = 64 * 1024;
 constexpr bool use_pm = true;
-constexpr double memory_rate = 0.85;
+constexpr double memory_rate = 0.75;
 
 constexpr bool KV_SEPERATE = true; // must be true
 constexpr int STOP_GC_COUNT = 5;
@@ -50,13 +50,13 @@ constexpr int MinCompactionL0Count = 8;
 constexpr bool CUCKOO_FILTER = true;
 constexpr bool BLOOM_FILTER = false;
 constexpr bool DEBUG_CHECK = false;
-constexpr bool DEBUG_PRINT = true;
+constexpr bool DEBUG_PRINT = false;
 constexpr bool TIME_ANALYSIS = true; // must be true, dynamic change B+Tree size reley on it
 constexpr bool READ_TIME_ANALYSIS = false;
 constexpr bool WRITE_TIME_ANALYSIS = false;
 
 constexpr bool SKIPLIST_NVM = false; // no use
-constexpr bool MALLO_CFLUSH = false;
+constexpr bool MALLO_CFLUSH = true;
 
 struct ReadStats {
   int64_t readCount = 0;

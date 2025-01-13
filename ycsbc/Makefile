@@ -1,4 +1,4 @@
-CC=/usr/bin/g++
+CC=/usr/local/bin/g++
 CXXFLAGS=-std=c++17 -g -o2 -Wall -pthread -I./ -I../include -L../build
 LDFLAGS= -lpthread -lleveldb -lz -lsnappy -lpmem
 SUBDIRS= core db 
