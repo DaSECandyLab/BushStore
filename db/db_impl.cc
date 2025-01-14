@@ -2110,7 +2110,7 @@ void DBImpl::MergeL1(){
       flushSSD = false;
     }
 
-    conVar_.wait_for(lk, std::chrono::milliseconds(1000));
+    conVar_.wait_for(lk, std::chrono::milliseconds(10000));
   }
 }
 

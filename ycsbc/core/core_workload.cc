@@ -58,7 +58,7 @@ const string CoreWorkload::REQUEST_DISTRIBUTION_PROPERTY =
 const string CoreWorkload::REQUEST_DISTRIBUTION_DEFAULT = "uniform";
 
 const string CoreWorkload::MAX_SCAN_LENGTH_PROPERTY = "maxscanlength";
-const string CoreWorkload::MAX_SCAN_LENGTH_DEFAULT = "1000";
+const string CoreWorkload::MAX_SCAN_LENGTH_DEFAULT = "100";
 
 const string CoreWorkload::SCAN_LENGTH_DISTRIBUTION_PROPERTY =
     "scanlengthdistribution";
@@ -72,6 +72,9 @@ const string CoreWorkload::INSERT_START_DEFAULT = "0";
 
 const string CoreWorkload::RECORD_COUNT_PROPERTY = "recordcount";
 const string CoreWorkload::OPERATION_COUNT_PROPERTY = "operationcount";
+
+const string CoreWorkload::ZIPFIAN_VALUE_PROPERTY = "zipfianvalue";
+const string CoreWorkload::ZIPFIAN_VALUE_DEFAULT = "0.98";
 
 void CoreWorkload::Init(const utils::Properties &p) {
   table_name_ = p.GetProperty(TABLENAME_PROPERTY,TABLENAME_DEFAULT);
@@ -105,6 +108,9 @@ void CoreWorkload::Init(const utils::Properties &p) {
                                                     READ_ALL_FIELDS_DEFAULT));
   write_all_fields_ = utils::StrToBool(p.GetProperty(WRITE_ALL_FIELDS_PROPERTY,
                                                      WRITE_ALL_FIELDS_DEFAULT));
+
+  double zipfian_value = std::stod(p.GetProperty(ZIPFIAN_VALUE_PROPERTY,
+                                                 ZIPFIAN_VALUE_DEFAULT));
   
   if (p.GetProperty(INSERT_ORDER_PROPERTY, INSERT_ORDER_DEFAULT) == "hashed") {
     ordered_inserts_ = false;
@@ -143,7 +149,7 @@ void CoreWorkload::Init(const utils::Properties &p) {
     // and pick another key.
     int op_count = std::stoi(p.GetProperty(OPERATION_COUNT_PROPERTY));
     int new_keys = (int)(op_count * insert_proportion * 2); // a fudge factor
-    key_chooser_ = new ScrambledZipfianGenerator(record_count_ + new_keys);
+    key_chooser_ = new ScrambledZipfianGenerator(record_count_ + new_keys, zipfian_value);
     
   } else if (request_dist == "latest") {
     key_chooser_ = new SkewedLatestGenerator(insert_key_sequence_);
@@ -154,10 +160,11 @@ void CoreWorkload::Init(const utils::Properties &p) {
   
   field_chooser_ = new UniformGenerator(0, field_count_ - 1);
   
-  if (scan_len_dist == "uniform") {
-    scan_len_chooser_ = new UniformGenerator(1, max_scan_len);
+  // keep same scan key length
+  if (scan_len_dist == "uniform") {  
+    scan_len_chooser_ = new UniformGenerator(max_scan_len, max_scan_len);
   } else if (scan_len_dist == "zipfian") {
-    scan_len_chooser_ = new ZipfianGenerator(1, max_scan_len);
+    scan_len_chooser_ = new ZipfianGenerator(max_scan_len, max_scan_len, zipfian_value);
   } else {
     throw utils::Exception("Distribution not allowed for scan length: " +
         scan_len_dist);
@@ -170,12 +177,14 @@ ycsbc::Generator<uint64_t> *CoreWorkload::GetFieldLenGenerator(
                                         FIELD_LENGTH_DISTRIBUTION_DEFAULT);
   int field_len = std::stoi(p.GetProperty(FIELD_LENGTH_PROPERTY,
                                           FIELD_LENGTH_DEFAULT));
+  double zipfian_value = std::stod(p.GetProperty(ZIPFIAN_VALUE_PROPERTY,
+                                                 ZIPFIAN_VALUE_DEFAULT)); 
   if(field_len_dist == "constant") {
     return new ConstGenerator(field_len);
   } else if(field_len_dist == "uniform") {
     return new UniformGenerator(1, field_len);
   } else if(field_len_dist == "zipfian") {
-    return new ZipfianGenerator(1, field_len);
+    return new ZipfianGenerator(1, field_len, zipfian_value);
   } else {
     throw utils::Exception("Unknown field length distribution: " +
         field_len_dist);

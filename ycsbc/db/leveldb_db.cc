@@ -23,7 +23,6 @@ namespace ycsbc {
         }
     }
     void LevelDB::SetOptions(leveldb::Options *options, utils::Properties &props) {
-
         options->create_if_missing = true;
         options->compression = leveldb::kNoCompression;
 

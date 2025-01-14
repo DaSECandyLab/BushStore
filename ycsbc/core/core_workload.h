@@ -133,6 +133,9 @@ class CoreWorkload {
   static const std::string RECORD_COUNT_PROPERTY;
   static const std::string OPERATION_COUNT_PROPERTY;
 
+  static const std::string ZIPFIAN_VALUE_PROPERTY;
+  static const std::string ZIPFIAN_VALUE_DEFAULT;
+
   ///
   /// Initialize the scenario.
   /// Called once, in the main client thread, before any operations are started.
@@ -156,7 +159,7 @@ class CoreWorkload {
       field_count_(0), read_all_fields_(false), write_all_fields_(false),
       field_len_generator_(NULL), key_generator_(NULL), key_chooser_(NULL),
       field_chooser_(NULL), scan_len_chooser_(NULL), insert_key_sequence_(3),
-      ordered_inserts_(true), record_count_(0) {
+      ordered_inserts_(true), record_count_(0), key_size_(100) {
   }
   
   virtual ~CoreWorkload() {
@@ -184,6 +187,7 @@ class CoreWorkload {
   CounterGenerator insert_key_sequence_;
   bool ordered_inserts_;
   size_t record_count_;
+  int key_size_; // default 100 bytes
 };
 
 inline std::string CoreWorkload::NextSequenceKey() {
@@ -230,11 +234,21 @@ inline std::string EncodeFixed64Reverse(uint64_t value) {
 }
 
 inline std::string CoreWorkload::BuildKeyName(uint64_t key_num) {
+  /*
   if (!ordered_inserts_) {
     key_num = utils::Hash(key_num);
   }
   return EncodeFixed64Reverse(key_num);
   // return std::string("user").append(std::to_string(key_num));
+  */
+ 
+  if (!ordered_inserts_) {
+    key_num = utils::Hash(key_num);
+  }
+  std::string prekey = "user";
+  std::string value = std::to_string(key_num);
+  int fill = std::max(0, key_size_ - 4 - static_cast<int>(value.size()));
+  return prekey.append(fill, '0').append(value);
 }
 
 inline std::string CoreWorkload::NextFieldName() {

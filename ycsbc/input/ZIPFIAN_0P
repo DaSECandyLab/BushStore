@@ -1,0 +1,3 @@
+23
+./ycsbc -db leveldb -dbpath /home/guoteng_20241228_135/data/BushStore -pmpath /home/guoteng_20241228_135/pmem1 -flushssd true -threads 8 -P workloads/zipfian_0p.spec -run true -dboption 1 -dbstatistics true -timeseries false -latency true
+0
