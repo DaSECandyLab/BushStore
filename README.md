@@ -90,3 +90,7 @@ You can run `run_db_bench.sh` directly and it will generate the output directory
  - 记得修改ycsbc文件夹里所有makefile的CC，需要与CMakeLists.txt里用的g++位置一样
 
  - 修改options.h和global.h以调整选项
+
+ - ycsbc/input/里的23指的是下一行有23个参数
+
+ 

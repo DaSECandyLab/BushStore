@@ -5,6 +5,7 @@
 #include "leveldb/filter_policy.h"
 #include "lib/coding.h"
 #include "core/utils.h"
+#include "leveldb/cache.h"
 
 using namespace std;
 
@@ -30,9 +31,10 @@ namespace ycsbc {
         options->pm_path_ = pm_path;
         options->flush_ssd = utils::StrToBool(props["flushssd"]);
         if(options->flush_ssd){
-            options->pm_size_ = 8ULL * 1024 * 1024 * 1024;
+            options->pm_size_ = 8ULL * 1024 * 1024 * 1024; // pmem size 8GB
         }
         options->filter_policy = leveldb::NewBloomFilterPolicy(10);
+        options->block_cache = leveldb::NewLRUCache(134217728); // 128MB
         // printf("set MioDB options!\n");
         // options->nvm_node = 0;
         // options->nvm_next_node = -1;

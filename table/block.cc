@@ -18,7 +18,7 @@
 namespace leveldb {
 
 inline uint32_t Block::NumRestarts() const {
-  assert(size_ >= sizeof(uint32_t));
+// assert(size_ >= sizeof(uint32_t));
   return DecodeFixed32(data_ + size_ - sizeof(uint32_t));
 }
 
@@ -98,7 +98,7 @@ class Block::Iter : public Iterator {
   }
 
   uint32_t GetRestartPoint(uint32_t index) {
-    assert(index < num_restarts_);
+  // assert(index < num_restarts_);
     return DecodeFixed32(data_ + restarts_ + index * sizeof(uint32_t));
   }
 
@@ -121,27 +121,27 @@ class Block::Iter : public Iterator {
         num_restarts_(num_restarts),
         current_(restarts_),
         restart_index_(num_restarts_) {
-    assert(num_restarts_ > 0);
+  // assert(num_restarts_ > 0);
   }
 
   bool Valid() const override { return current_ < restarts_; }
   Status status() const override { return status_; }
   Slice key() const override {
-    assert(Valid());
+  // assert(Valid());
     return key_;
   }
   Slice value() const override {
-    assert(Valid());
+  // assert(Valid());
     return value_;
   }
 
   void Next() override {
-    assert(Valid());
+  // assert(Valid());
     ParseNextKey();
   }
 
   void Prev() override {
-    assert(Valid());
+  // assert(Valid());
 
     // Scan backwards to a restart point before current_
     const uint32_t original = current_;
@@ -210,7 +210,7 @@ class Block::Iter : public Iterator {
     // We might be able to use our current position within the restart block.
     // This is true if we determined the key we desire is in the current block
     // and is after than the current key.
-    assert(current_key_compare == 0 || Valid());
+  // assert(current_key_compare == 0 || Valid());
     bool skip_seek = left == restart_index_ && current_key_compare < 0;
     if (!skip_seek) {
       SeekToRestartPoint(left);

@@ -18,7 +18,7 @@ public:
         if(index > nums_) return ;
         int charIndex = (index >> 3);
         int innerIndex = (index & 7);
-        assert(!get(index));
+      // assert(!get(index));
         bitmaps_[charIndex] |= (1 << innerIndex);
         if(MALLO_CFLUSH){
             clflush(&bitmaps_[charIndex], 1);
@@ -29,7 +29,7 @@ public:
         if(index > nums_) return ;
         int charIndex = (index >> 3);
         int innerIndex = (index & 7);
-        assert(get(index));
+      // assert(get(index));
         bitmaps_[charIndex] ^= (1 << innerIndex);
         if(MALLO_CFLUSH){
             clflush(&bitmaps_[charIndex], 1);

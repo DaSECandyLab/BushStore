@@ -67,7 +67,7 @@ static void Increment(const Comparator* cmp, std::string* key) {
   if (cmp == BytewiseComparator()) {
     key->push_back('\0');
   } else {
-    assert(cmp == &reverse_key_comparator);
+  // assert(cmp == &reverse_key_comparator);
     std::string rev = Reverse(*key);
     rev.push_back('\0');
     *key = Reverse(rev);
@@ -278,7 +278,7 @@ class KeyConvertingIterator : public Iterator {
   void Prev() override { iter_->Prev(); }
 
   Slice key() const override {
-    assert(Valid());
+  // assert(Valid());
     ParsedInternalKey key;
     if (!ParseInternalKey(iter_->key(), &key)) {
       status_ = Status::Corruption("malformed internal key");

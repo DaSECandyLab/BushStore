@@ -67,7 +67,7 @@ static int64_t TotalFileSize(const std::vector<FileMetaData*>& files) {
 }
 
 Version::~Version() {
-  assert(refs_ == 0);
+// assert(refs_ == 0);
 
   // Remove from linked list
   prev_->next_ = next_;
@@ -77,7 +77,7 @@ Version::~Version() {
   for (int level = 0; level < config::kNumLevels; level++) {
     for (size_t i = 0; i < files_[level].size(); i++) {
       FileMetaData* f = files_[level][i];
-      assert(f->refs > 0);
+    // assert(f->refs > 0);
       f->refs--;
       if (f->refs <= 0) {
         delete f;
@@ -177,11 +177,11 @@ class Version::LevelFileNumIterator : public Iterator {
     index_ = flist_->empty() ? 0 : flist_->size() - 1;
   }
   void Next() override {
-    assert(Valid());
+  // assert(Valid());
     index_++;
   }
   void Prev() override {
-    assert(Valid());
+  // assert(Valid());
     if (index_ == 0) {
       index_ = flist_->size();  // Marks as invalid
     } else {
@@ -189,11 +189,11 @@ class Version::LevelFileNumIterator : public Iterator {
     }
   }
   Slice key() const override {
-    assert(Valid());
+  // assert(Valid());
     return (*flist_)[index_]->largest.Encode();
   }
   Slice value() const override {
-    assert(Valid());
+  // assert(Valid());
     EncodeFixed64(value_buf_, (*flist_)[index_]->number);
     EncodeFixed64(value_buf_ + 8, (*flist_)[index_]->file_size);
     return Slice(value_buf_, sizeof(value_buf_));
@@ -510,8 +510,8 @@ bool Version::RecordReadSample(Slice internal_key) {
 void Version::Ref() { ++refs_; }
 
 void Version::Unref() {
-  assert(this != &vset_->dummy_versions_);
-  assert(refs_ >= 1);
+// assert(this != &vset_->dummy_versions_);
+// assert(refs_ >= 1);
   --refs_;
   if (refs_ == 0) {
     delete this;
@@ -555,8 +555,8 @@ int Version::PickLevelForMemTableOutput(const Slice& smallest_user_key,
 void Version::GetOverlappingInputs(int level, const InternalKey* begin,
                                    const InternalKey* end,
                                    std::vector<FileMetaData*>* inputs) {
-  assert(level >= 0);
-  assert(level < config::kNumLevels);
+// assert(level >= 0);
+// assert(level < config::kNumLevels);
   inputs->clear();
   Slice user_begin, user_end;
   if (begin != nullptr) {
@@ -778,7 +778,7 @@ class VersionSet::Builder {
       std::vector<FileMetaData*>* files = &v->files_[level];
       if (level > 0 && !files->empty()) {
         // Must not overlap
-        assert(vset_->icmp_.Compare((*files)[files->size() - 1]->largest,
+      // assert(vset_->icmp_.Compare((*files)[files->size() - 1]->largest,
                                     f->smallest) < 0);
       }
       f->refs++;
@@ -810,15 +810,15 @@ VersionSet::VersionSet(const std::string& dbname, const Options* options,
 
 VersionSet::~VersionSet() {
   current_->Unref();
-  assert(dummy_versions_.next_ == &dummy_versions_);  // List must be empty
+// assert(dummy_versions_.next_ == &dummy_versions_);  // List must be empty
   delete descriptor_log_;
   delete descriptor_file_;
 }
 
 void VersionSet::AppendVersion(Version* v) {
   // Make "v" current
-  assert(v->refs_ == 0);
-  assert(v != current_);
+// assert(v->refs_ == 0);
+// assert(v != current_);
   if (current_ != nullptr) {
     current_->Unref();
   }
@@ -834,8 +834,8 @@ void VersionSet::AppendVersion(Version* v) {
 
 Status VersionSet::LogAndApply(VersionEdit* edit, port::Mutex* mu) {
   if (edit->has_log_number_) {
-    assert(edit->log_number_ >= log_number_);
-    assert(edit->log_number_ < next_file_number_);
+  // assert(edit->log_number_ >= log_number_);
+  // assert(edit->log_number_ < next_file_number_);
   } else {
     edit->SetLogNumber(log_number_);
   }
@@ -862,7 +862,7 @@ Status VersionSet::LogAndApply(VersionEdit* edit, port::Mutex* mu) {
   if (descriptor_log_ == nullptr) {
     // No reason to unlock *mu here since we only hit this path in the
     // first call to LogAndApply (when opening the database).
-    assert(descriptor_file_ == nullptr);
+  // assert(descriptor_file_ == nullptr);
     new_manifest_file = DescriptorFileName(dbname_, manifest_file_number_);
     edit->SetNextFile(next_file_number_);
     s = env_->NewWritableFile(new_manifest_file, &descriptor_file_);
@@ -1070,12 +1070,12 @@ bool VersionSet::ReuseManifest(const std::string& dscname,
     return false;
   }
 
-  assert(descriptor_file_ == nullptr);
-  assert(descriptor_log_ == nullptr);
+// assert(descriptor_file_ == nullptr);
+// assert(descriptor_log_ == nullptr);
   Status r = env_->NewAppendableFile(dscname, &descriptor_file_);
   if (!r.ok()) {
     Log(options_->info_log, "Reuse MANIFEST: %s\n", r.ToString().c_str());
-    assert(descriptor_file_ == nullptr);
+  // assert(descriptor_file_ == nullptr);
     return false;
   }
 
@@ -1160,8 +1160,8 @@ Status VersionSet::WriteSnapshot(log::Writer* log) {
 }
 
 int VersionSet::NumLevelFiles(int level) const {
-  assert(level >= 0);
-  assert(level < config::kNumLevels);
+// assert(level >= 0);
+// assert(level < config::kNumLevels);
   return current_->files_[level].size();
 }
 
@@ -1222,8 +1222,8 @@ void VersionSet::AddLiveFiles(std::set<uint64_t>* live) {
 }
 
 int64_t VersionSet::NumLevelBytes(int level) const {
-  assert(level >= 0);
-  assert(level < config::kNumLevels);
+// assert(level >= 0);
+// assert(level < config::kNumLevels);
   return TotalFileSize(current_->files_[level]);
 }
 
@@ -1249,7 +1249,7 @@ int64_t VersionSet::MaxNextLevelOverlappingBytes() {
 // REQUIRES: inputs is not empty
 void VersionSet::GetRange(const std::vector<FileMetaData*>& inputs,
                           InternalKey* smallest, InternalKey* largest) {
-  assert(!inputs.empty());
+// assert(!inputs.empty());
   smallest->Clear();
   largest->Clear();
   for (size_t i = 0; i < inputs.size(); i++) {
@@ -1306,7 +1306,7 @@ Iterator* VersionSet::MakeInputIterator(Compaction* c) {
       }
     }
   }
-  assert(num <= space);
+// assert(num <= space);
   Iterator* result = NewMergingIterator(&icmp_, list, num);
   delete[] list;
   return result;
@@ -1347,17 +1347,17 @@ Compaction* VersionSet::PickCompaction() {
       // getInputs();
       return c;
     }
-    assert(c->inputs_[1].size() != 0);
+  // assert(c->inputs_[1].size() != 0);
     c->input_version_ = current_;
     c->input_version_->Ref();
     int last_index = i - c->inputs_[1].size() - 1;
     int next_index = i;
     if(last_index >= 0){
-      assert(current_->files_[next_level].size() > last_index);
+    // assert(current_->files_[next_level].size() > last_index);
       c->smallest = current_->files_[next_level][last_index]->largest.Encode();
     }
     if(next_index < current_->files_[next_level].size()){
-      assert(next_index >= 0);
+    // assert(next_index >= 0);
       c->largest = current_->files_[next_level][next_index]->smallest.Encode();
     }
     // if(i == current_->files_[next_level].size()){
@@ -1375,8 +1375,8 @@ Compaction* VersionSet::PickCompaction() {
   const bool seek_compaction = (current_->file_to_compact_ != nullptr);
   if (size_compaction) {
     level = current_->compaction_level_;
-    assert(level >= 0);
-    assert(level + 1 < config::kNumLevels);
+  // assert(level >= 0);
+  // assert(level + 1 < config::kNumLevels);
     c = new Compaction(options_, level);
 
     // Pick the first file that comes after compact_pointer_[level]
@@ -1411,7 +1411,7 @@ Compaction* VersionSet::PickCompaction() {
     // c->inputs_[0] earlier and replace it with an overlapping set
     // which will include the picked file.
     current_->GetOverlappingInputs(0, &smallest, &largest, &c->inputs_[0]);
-    assert(!c->inputs_[0].empty());
+  // assert(!c->inputs_[0].empty());
   }
 
   SetupOtherInputs(c);

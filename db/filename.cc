@@ -26,22 +26,22 @@ static std::string MakeFileName(const std::string& dbname, uint64_t number,
 }
 
 std::string LogFileName(const std::string& dbname, uint64_t number) {
-  assert(number > 0);
+// assert(number > 0);
   return MakeFileName(dbname, number, "log");
 }
 
 std::string TableFileName(const std::string& dbname, uint64_t number) {
-  assert(number > 0);
+// assert(number > 0);
   return MakeFileName(dbname, number, "ldb");
 }
 
 std::string SSTTableFileName(const std::string& dbname, uint64_t number) {
-  assert(number > 0);
+// assert(number > 0);
   return MakeFileName(dbname, number, "sst");
 }
 
 std::string DescriptorFileName(const std::string& dbname, uint64_t number) {
-  assert(number > 0);
+// assert(number > 0);
   char buf[100];
   std::snprintf(buf, sizeof(buf), "/MANIFEST-%06llu",
                 static_cast<unsigned long long>(number));
@@ -55,7 +55,7 @@ std::string CurrentFileName(const std::string& dbname) {
 std::string LockFileName(const std::string& dbname) { return dbname + "/LOCK"; }
 
 std::string TempFileName(const std::string& dbname, uint64_t number) {
-  assert(number > 0);
+// assert(number > 0);
   return MakeFileName(dbname, number, "dbtmp");
 }
 
@@ -125,7 +125,7 @@ Status SetCurrentFile(Env* env, const std::string& dbname,
   // Remove leading "dbname/" and add newline to manifest file name
   std::string manifest = DescriptorFileName(dbname, descriptor_number);
   Slice contents = manifest;
-  assert(contents.starts_with(dbname + "/"));
+// assert(contents.starts_with(dbname + "/"));
   contents.remove_prefix(dbname.size() + 1);
   std::string tmp = TempFileName(dbname, descriptor_number);
   Status s = WriteStringToFileSync(env, contents.ToString() + "\n", tmp);

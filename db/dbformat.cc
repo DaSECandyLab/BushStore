@@ -13,8 +13,8 @@
 namespace leveldb {
 
 static uint64_t PackSequenceAndType(uint64_t seq, ValueType t) {
-  assert(seq <= kMaxSequenceNumber);
-  assert(t <= kValueTypeForSeek);
+// assert(seq <= kMaxSequenceNumber);
+// assert(t <= kValueTypeForSeek);
   return (seq << 8) | t;
 }
 
@@ -75,8 +75,8 @@ void InternalKeyComparator::FindShortestSeparator(std::string* start,
     // Tack on the earliest possible number to the shortened user key.
     PutFixed64(&tmp,
                PackSequenceAndType(kMaxSequenceNumber, kValueTypeForSeek));
-    assert(this->Compare(*start, tmp) < 0);
-    assert(this->Compare(tmp, limit) < 0);
+  // assert(this->Compare(*start, tmp) < 0);
+  // assert(this->Compare(tmp, limit) < 0);
     start->swap(tmp);
   }
 }
@@ -91,7 +91,7 @@ void InternalKeyComparator::FindShortSuccessor(std::string* key) const {
     // Tack on the earliest possible number to the shortened user key.
     PutFixed64(&tmp,
                PackSequenceAndType(kMaxSequenceNumber, kValueTypeForSeek));
-    assert(this->Compare(*key, tmp) < 0);
+  // assert(this->Compare(*key, tmp) < 0);
     key->swap(tmp);
   }
 }

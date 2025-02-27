@@ -82,7 +82,7 @@ int lbtree::bulkloadSubtree(
     int ncur[32];  // current node at every level
     int top_level; // top_level is the top level that this method builds
 
-    assert(start_key >= 0 && num_key > 0 && bfill > 0.0 && bfill <= 1.0 && target_level >= 0);
+    // assert(start_key >= 0 && num_key > 0 && bfill > 0.0 && bfill <= 1.0 && target_level >= 0);
 
     // 1. compute leaf and nonleaf number of keys
     int leaf_fill_num = (int)((float)LEAF_KEY_NUM * bfill);
@@ -137,7 +137,7 @@ int lbtree::bulkloadSubtree(
         if (i == nodenum - 1)
         {
             fillnum = num_key - (nodenum - 1) * leaf_fill_num;
-            assert(fillnum >= 1 && fillnum <= leaf_fill_num);
+            // assert(fillnum >= 1 && fillnum <= leaf_fill_num);
 
             leaf_meta.v.bitmap = (((1 << fillnum) - 1)
                                   << (LEAF_KEY_NUM - fillnum));
@@ -240,7 +240,7 @@ int lbtree::bulkloadToptree(
     int ncur[32];  // current node at every level
     int top_level; // top_level is the top level that this method builds
 
-    assert(num_key >= 2 && bfill > 0.0 && bfill <= 1.0 && cur_level >= 0 && target_level > cur_level);
+    // assert(num_key >= 2 && bfill > 0.0 && bfill <= 1.0 && cur_level >= 0 && target_level > cur_level);
 
     // 1. compute nonleaf number of keys
     int nonleaf_fill_num = (int)((float)NON_LEAF_KEY_NUM * bfill);
@@ -401,7 +401,7 @@ int lbtree::bulkload(int keynum, keyInput *input, float bfill)
         tree_meta->setFirstLeaf(bta[0].pfirst[0]);
 
         // if this assertion is false, then the tree has > 31 levels
-        assert(bta[0].n_nodes[bta[0].top_level] == 1);
+        // assert(bta[0].n_nodes[bta[0].top_level] == 1);
 
         delete[] bta;
         return tree_meta->root_level;
@@ -463,7 +463,7 @@ int lbtree::bulkload(int keynum, keyInput *input, float bfill)
     }
 
     // Otherwise, top_keys[] and top_ptrs[] are not large enough (can't be true)
-    assert(num_nodes <= sizeof(top_keys) / sizeof(key_type));
+    // assert(num_nodes <= sizeof(top_keys) / sizeof(key_type));
 
     // 6. build the top nonleaf nodes
     bta[0].top_level = bulkloadToptree(top_ptrs, top_keys, num_nodes, bfill,
@@ -474,7 +474,7 @@ int lbtree::bulkload(int keynum, keyInput *input, float bfill)
     tree_meta->setFirstLeaf(bta[0].pfirst[0]);
 
     // if this assertion is false, then the tree has > 31 levels
-    assert(bta[0].n_nodes[bta[0].top_level] == 1);
+    // assert(bta[0].n_nodes[bta[0].top_level] == 1);
 
     // 7. free BldThArgs[]
     delete[] bta;

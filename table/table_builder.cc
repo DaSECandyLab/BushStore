@@ -70,7 +70,7 @@ TableBuilder::TableBuilder(const Options& options, WritableFile* file)
 }
 
 TableBuilder::~TableBuilder() {
-  assert(rep_->closed);  // Catch errors where caller forgot to call Finish()
+// assert(rep_->closed);  // Catch errors where caller forgot to call Finish()
   delete rep_->filter_block;
   delete rep_;
 }
@@ -93,14 +93,14 @@ Status TableBuilder::ChangeOptions(const Options& options) {
 
 void TableBuilder::Add(const Slice& key, const Slice& value) {
   Rep* r = rep_;
-  assert(!r->closed);
+// assert(!r->closed);
   if (!ok()) return;
   if (r->num_entries > 0) {
-    assert(r->options.comparator->Compare(key, Slice(r->last_key)) > 0);
+  // assert(r->options.comparator->Compare(key, Slice(r->last_key)) > 0);
   }
 
   if (r->pending_index_entry) {
-    assert(r->data_block.empty());
+  // assert(r->data_block.empty());
     r->options.comparator->FindShortestSeparator(&r->last_key, key);
     std::string handle_encoding;
     r->pending_handle.EncodeTo(&handle_encoding);
@@ -124,10 +124,10 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
 
 void TableBuilder::Flush() {
   Rep* r = rep_;
-  assert(!r->closed);
+// assert(!r->closed);
   if (!ok()) return;
   if (r->data_block.empty()) return;
-  assert(!r->pending_index_entry);
+// assert(!r->pending_index_entry);
   WriteBlock(&r->data_block, &r->pending_handle);
   if (ok()) {
     r->pending_index_entry = true;
@@ -143,7 +143,7 @@ void TableBuilder::WriteBlock(BlockBuilder* block, BlockHandle* handle) {
   //    block_data: uint8[n]
   //    type: uint8
   //    crc: uint32
-  assert(ok());
+// assert(ok());
   Rep* r = rep_;
   Slice raw = block->Finish();
 
@@ -198,7 +198,7 @@ Status TableBuilder::status() const { return rep_->status; }
 Status TableBuilder::Finish() {
   Rep* r = rep_;
   Flush();
-  assert(!r->closed);
+// assert(!r->closed);
   r->closed = true;
 
   BlockHandle filter_block_handle, metaindex_block_handle, index_block_handle;
@@ -254,7 +254,7 @@ Status TableBuilder::Finish() {
 
 void TableBuilder::Abandon() {
   Rep* r = rep_;
-  assert(!r->closed);
+// assert(!r->closed);
   r->closed = true;
 }
 

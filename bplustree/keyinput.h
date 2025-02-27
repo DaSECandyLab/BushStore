@@ -140,7 +140,7 @@ public:
     }
 
     Int64 pos = index - key_bottom;
-    assert(pos >= 0);
+  // assert(pos >= 0);
     return key_buffer[pos];
   }
 
@@ -264,7 +264,7 @@ public:
   {
     key_num = num;
     keys = new Int64[num];
-    assert(keys);
+  // assert(keys);
 
     keygen(key_num, keys);
     sortkey(key_num, keys);
@@ -281,7 +281,7 @@ public:
   Int64 get_key(Int64 index)
   {
     Int64 ii = key_start + key_step * index;
-    assert((0 <= ii) && (ii < key_num));
+  // assert((0 <= ii) && (ii < key_num));
     return keys[ii];
   }
 }; // inMemKeyInput

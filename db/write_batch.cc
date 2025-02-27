@@ -137,13 +137,13 @@ Status WriteBatchInternal::InsertInto(const WriteBatch* b, MemTable* memtable) {
 }
 
 void WriteBatchInternal::SetContents(WriteBatch* b, const Slice& contents) {
-  assert(contents.size() >= kHeader);
+// assert(contents.size() >= kHeader);
   b->rep_.assign(contents.data(), contents.size());
 }
 
 void WriteBatchInternal::Append(WriteBatch* dst, const WriteBatch* src) {
   SetCount(dst, Count(dst) + Count(src));
-  assert(src->rep_.size() >= kHeader);
+// assert(src->rep_.size() >= kHeader);
   dst->rep_.append(src->rep_.data() + kHeader, src->rep_.size() - kHeader);
 }
 

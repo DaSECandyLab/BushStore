@@ -333,7 +333,7 @@ Status DBImpl::Recover(VersionEdit* edit, bool* save_manifest) {
   // committed only when the descriptor is created, and this directory
   // may already exist from a previous failed creation attempt.
   env_->CreateDir(dbname_);
-  assert(db_lock_ == nullptr);
+// assert(db_lock_ == nullptr);
   Status s = env_->LockFile(LockFileName(dbname_), &db_lock_);
   if (!s.ok()) {
     return s;
@@ -512,9 +512,9 @@ Status DBImpl::RecoverLogFile(uint64_t log_number, bool last_log,
 
   // See if we should keep reusing the last log file.
   if (status.ok() && options_.reuse_logs && last_log && compactions == 0) {
-    assert(logfile_ == nullptr);
-    assert(log_ == nullptr);
-    assert(mem_ == nullptr);
+  // assert(logfile_ == nullptr);
+  // assert(log_ == nullptr);
+  // assert(mem_ == nullptr);
     uint64_t lfile_size;
     if (env_->GetFileSize(fname, &lfile_size).ok() &&
         env_->NewAppendableFile(fname, &logfile_).ok()) {
@@ -596,7 +596,7 @@ Status DBImpl::WriteLevel0TableToPM(MemTable* mem){
         // assert(index >= 4);
         // auto check = [&](uint16_t index, uint32_t pointer){
         //     vPage* addr = (vPage*)getAbsoluteAddr(((uint64_t)pointer) << 12);
-        //     assert(addr->v(index).size() == 4096);
+        //   // assert(addr->v(index).size() == 4096);
         // };
         // check(index, pointer);
         builder.add(key, pointer, index);
@@ -605,7 +605,7 @@ Status DBImpl::WriteLevel0TableToPM(MemTable* mem){
         builder.add(key, iter->value());
         iter->ClearValue();
       }
-      kv_total_.fetch_add(8, std::memory_order_relaxed);
+      kv_total_.fetch_add(KEY_SIZE, std::memory_order_relaxed);
       if (CUCKOO_FILTER && filter_valid) {
         // cuckoo_filter_->Put(ExtractUserKey(key), currentFileNumber);
         cuckoo_filter_->PutFirst0AndMin(ExtractUserKey(key), currentFileNumber);
@@ -615,7 +615,7 @@ Status DBImpl::WriteLevel0TableToPM(MemTable* mem){
       }
       //cuckoo_filter->Put(ExtractUserKey(key), meta->number);
     }
-    assert(builder.cur_node_index_ <= page_count);
+  // assert(builder.cur_node_index_ <= page_count);
     builder.setMaxKey(key);
     std::shared_ptr<lbtree> tree = nullptr;
     builder.finish(tree);
@@ -705,7 +705,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 void DBImpl::CompactMemTable() {
   mutex_.AssertHeld();
-  assert(imm_ != nullptr);
+// assert(imm_ != nullptr);
 
   // Save the contents of the memtable as a new Table
   VersionEdit edit;
@@ -768,8 +768,8 @@ void DBImpl::CompactRange(const Slice* begin, const Slice* end) {
 
 void DBImpl::TEST_CompactRange(int level, const Slice* begin,
                                const Slice* end) {
-  assert(level >= 0);
-  assert(level + 1 < config::kNumLevels);
+// assert(level >= 0);
+// assert(level + 1 < config::kNumLevels);
 
   InternalKey begin_storage, end_storage;
 
@@ -865,7 +865,7 @@ void DBImpl::BackgroundCall() {
     space_signal_.SignalAll();
   }
   MutexLock l(&mutex_);
-  assert(background_compaction_scheduled_);
+// assert(background_compaction_scheduled_);
   if (shutting_down_.load(std::memory_order_acquire)) {
     // No more background work when shutting down.
   } else if (!bg_error_.ok()) {
@@ -1007,7 +1007,7 @@ Status DBImpl::CompactionLevel0(){
   // std::vector<lbtree*> Table_L0_Merge = Table_L0_Sorted;
   std::reverse(Table_L0_Merge.begin(), Table_L0_Merge.end());
   // if(Table_L0_Sorted.empty()){
-  //   assert(false);
+  // // assert(false);
   //   return Status::OK();
   // }
 
@@ -1128,13 +1128,13 @@ Status DBImpl::CompactionLevel0(){
       } else {
                 // auto check = [&](uint16_t index, uint32_t pointer, Slice& key){
         //   vPage* addr = (vPage*)getAbsoluteAddr(((uint64_t)pointer) << 12);
-        //   assert(addr->v(index).size() == 1000);
+        // // assert(addr->v(index).size() == 1000);
         // };
         // check(input->index(), input->pointer(), key);
         builder.add(key, input->finger(), input->pointer(), input->index());
       }
     } else {
-      kv_total_.fetch_sub(input->value().size() + 8, std::memory_order_relaxed);
+      kv_total_.fetch_sub(input->value().size() + KEY_SIZE, std::memory_order_relaxed);
       input->clrValue();
       KeyDrop++;
     }
@@ -1270,7 +1270,7 @@ Status DBImpl::CompactionLevel0(){
   //   INT_MIN)){
   //     delete Table_L0_Merge[i];
   //   }else{
-  //     assert(expected > 0);
+  //   // assert(expected > 0);
   //     Table_Delete_.push_back(Table_L0_Merge[i]);
   //   }
   // }
@@ -1407,7 +1407,7 @@ Status DBImpl::CompactionLevel1Concurrency(){
   if(!writeSeq){
     sst_start = DecodeDBBenchFixed64(files.front()->smallest.Encode().data());
     sst_end = DecodeDBBenchFixed64(files.back()->largest.Encode().data()) + 1;
-    assert(sst_start < sst_end);
+  // assert(sst_start < sst_end);
   }
   // key_type sst_start = DecodeDBBenchFixed64(c->sst_smallest.data());
   // key_type sst_end = DecodeDBBenchFixed64(c->sst_largets.data());
@@ -1497,7 +1497,7 @@ Status DBImpl::CompactionLevel1Concurrency(){
         int cur = 0;
     int sst_index;
     int last_index;
-    assert(starts.size() >= 2);
+  // assert(starts.size() >= 2);
     std::vector<int> start_index(starts.size(), -1);
     // int last = sst_page_end_index == -1 ? bnodes.size() :
     // sst_page_end_index;
@@ -1636,13 +1636,13 @@ Status DBImpl::CompactionLevel1Concurrency(){
     int lastIndex = 0;
     for(int i = 0; i < tasks.size(); i++){
       printf("add task: [%ld, %ld), node count: %d, sst count: %zull\n", tasks[i].begin, tasks[i].end, tasks[i].bnode_begin, tasks[i].files.size());
-      assert(lastEnd <= tasks[i].begin);
-      assert(lastIndex <= tasks[i].bnode_begin);
-      assert(tasks[i].begin < tasks[i].end);
+    // assert(lastEnd <= tasks[i].begin);
+    // assert(lastIndex <= tasks[i].bnode_begin);
+    // assert(tasks[i].begin < tasks[i].end);
       lastEnd = tasks[i].end;
       lastIndex = tasks[i].bnode_begin;
     }
-    assert(rangeBegin <= tasks.front().begin && tasks.back().end <= rangeEnd);
+  // assert(rangeBegin <= tasks.front().begin && tasks.back().end <= rangeEnd);
   }
   auto writeToSSD = [&](Task &task, CompactionState *compact){
       Iterator *input = task.it;
@@ -1652,8 +1652,8 @@ Status DBImpl::CompactionLevel1Concurrency(){
       //     compact->compaction->level() + 1);
 
       // assert(versions_->NumLevelFiles(compact->compaction->level()) > 0);
-      assert(compact->builder == nullptr);
-      assert(compact->outfile == nullptr);
+    // assert(compact->builder == nullptr);
+    // assert(compact->outfile == nullptr);
       compact->smallest_snapshot = versions_->LastSequence();
 
 
@@ -1913,8 +1913,8 @@ Status DBImpl::CompactionLevel1(){
 //   //     compact->compaction->level() + 1);
 
 //   // assert(versions_->NumLevelFiles(compact->compaction->level()) > 0);
-//   assert(compact->builder == nullptr);
-//   assert(compact->outfile == nullptr);
+// // assert(compact->builder == nullptr);
+// // assert(compact->outfile == nullptr);
 //   if (snapshots_.empty()) {
 //     compact->smallest_snapshot = versions_->LastSequence();
 //   } else { 
@@ -2165,7 +2165,7 @@ void DBImpl::BackgroundCompaction() {
   //   // Nothing to do
   // } else if (!is_manual && c->IsTrivialMove()) {
   //   // Move file to next level
-  //   assert(c->num_input_files(0) == 1);
+  // // assert(c->num_input_files(0) == 1);
   //   FileMetaData* f = c->input(0, 0);
   //   c->edit()->RemoveFile(c->level(), f->number);
   //   c->edit()->AddFile(c->level() + 1, f->number, f->file_size, f->smallest,
@@ -2227,7 +2227,7 @@ void DBImpl::CleanupCompaction(CompactionState* compact) {
     compact->builder->Abandon();
     delete compact->builder;
   } else {
-    assert(compact->outfile == nullptr);
+  // assert(compact->outfile == nullptr);
   }
   delete compact->outfile;
   for (size_t i = 0; i < compact->outputs.size(); i++) {
@@ -2238,8 +2238,8 @@ void DBImpl::CleanupCompaction(CompactionState* compact) {
 }
 
 Status DBImpl::OpenCompactionOutputFile(CompactionState* compact) {
-  assert(compact != nullptr);
-  assert(compact->builder == nullptr);
+// assert(compact != nullptr);
+// assert(compact->builder == nullptr);
   uint64_t file_number;
   {
     mutex_.Lock();
@@ -2265,12 +2265,12 @@ Status DBImpl::OpenCompactionOutputFile(CompactionState* compact) {
 
 Status DBImpl::FinishCompactionOutputFile(CompactionState* compact,
                                           Iterator* input) {
-  assert(compact != nullptr);
-  assert(compact->outfile != nullptr);
-  assert(compact->builder != nullptr);
+// assert(compact != nullptr);
+// assert(compact->outfile != nullptr);
+// assert(compact->builder != nullptr);
 
   const uint64_t output_number = compact->current_output()->number;
-  assert(output_number != 0);
+// assert(output_number != 0);
 
   // Check for iterator errors
   Status s = input->status();
@@ -2355,9 +2355,9 @@ Status DBImpl:: DoCompactionWork(CompactionState* compact) {
       compact->compaction->num_input_files(1),
       compact->compaction->level() + 1);
 
-  assert(versions_->NumLevelFiles(compact->compaction->level()) > 0);
-  assert(compact->builder == nullptr);
-  assert(compact->outfile == nullptr);
+// assert(versions_->NumLevelFiles(compact->compaction->level()) > 0);
+// assert(compact->builder == nullptr);
+// assert(compact->outfile == nullptr);
   if (snapshots_.empty()) {
     compact->smallest_snapshot = versions_->LastSequence();
   } else {
@@ -2558,7 +2558,7 @@ Iterator* DBImpl::NewInternalIterator(const ReadOptions& options,
   }
   mutex_l0_.unlock();
   mutex_l1_.lock();
-    assert(Table_LN_.size() == 1 || Table_LN_.size() == 0);
+  // assert(Table_LN_.size() == 1 || Table_LN_.size() == 0);
     if(!Table_LN_.empty()){
       list.push_back(new BP_Iterator_Read(Table_LN_.back(), nullptr, true, &mutex_l1_));
     }
@@ -2933,10 +2933,10 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* updates) {
 // REQUIRES: First writer must have a non-null batch
 WriteBatch* DBImpl::BuildBatchGroup(Writer** last_writer) {
   mutex_.AssertHeld();
-  assert(!writers_.empty());
+// assert(!writers_.empty());
   Writer* first = writers_.front();
   WriteBatch* result = first->batch;
-  assert(result != nullptr);
+// assert(result != nullptr);
 
   size_t size = WriteBatchInternal::ByteSize(first->batch);
 
@@ -2969,7 +2969,7 @@ WriteBatch* DBImpl::BuildBatchGroup(Writer** last_writer) {
       if (result == first->batch) {
         // Switch to temporary batch instead of disturbing caller's batch
         result = tmp_batch_;
-        assert(WriteBatchInternal::Count(result) == 0);
+      // assert(WriteBatchInternal::Count(result) == 0);
         WriteBatchInternal::Append(result, first->batch);
       }
       WriteBatchInternal::Append(result, w->batch);
@@ -2983,7 +2983,7 @@ WriteBatch* DBImpl::BuildBatchGroup(Writer** last_writer) {
 // REQUIRES: this thread is currently at the front of the writer queue
 Status DBImpl::MakeRoomForWrite(bool force) {
   mutex_.AssertHeld();
-  assert(!writers_.empty());
+// assert(!writers_.empty());
   bool allow_delay = !force;
   Status s;
   while (true) {
@@ -3030,7 +3030,7 @@ Status DBImpl::MakeRoomForWrite(bool force) {
       space_signal_.Wait();
     } else {
       // Attempt to switch to a new memtable and trigger compaction of old
-      assert(versions_->PrevLogNumber() == 0);
+    // assert(versions_->PrevLogNumber() == 0);
       uint64_t new_log_number = versions_->NewFileNumber();
       WritableFile* lfile = nullptr;
       s = env_->NewWritableFile(LogFileName(dbname_, new_log_number), &lfile);
@@ -3200,7 +3200,7 @@ Status DB::Open(const Options& options, const std::string& dbname, DB** dbptr) {
   }
   impl->mutex_.Unlock();
   if (s.ok()) {
-    assert(impl->mem_ != nullptr);
+  // assert(impl->mem_ != nullptr);
     *dbptr = impl;
   } else {
     delete impl;

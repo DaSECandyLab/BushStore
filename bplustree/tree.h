@@ -54,7 +54,7 @@
 typedef uint64_t key_type;
 #define KEY_SIZE 8     /* size of a key in tree node */
 #define POINTER_SIZE 8 /* size of a pointer/value in node */
-#define ITEM_SIZE 8    /* key size or pointer size */
+//#define ITEM_SIZE 8    /* key size or pointer size */
 
 #define MAX_KEY ((key_type)(0x7fffffffffffffffULL))
 #define MIN_KEY ((key_type)(0x8000000000000000ULL))

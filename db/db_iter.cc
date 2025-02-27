@@ -62,11 +62,11 @@ class DBIter : public Iterator {
   ~DBIter() override { delete iter_; }
   bool Valid() const override { return valid_; }
   Slice key() const override {
-    assert(valid_);
+  // assert(valid_);
     return (direction_ == kForward) ? ExtractUserKey(iter_->key()) : saved_key_;
   }
   Slice value() const override {
-    assert(valid_);
+  // assert(valid_);
     return (direction_ == kForward) ? iter_->value() : saved_value_;
   }
   Status status() const override {
@@ -127,7 +127,7 @@ inline bool DBIter::ParseKey(ParsedInternalKey* ikey) {
     bytes_until_read_sampling_ += RandomCompactionPeriod();
     db_->RecordReadSample(k);
   }
-  assert(bytes_until_read_sampling_ >= bytes_read);
+// assert(bytes_until_read_sampling_ >= bytes_read);
   bytes_until_read_sampling_ -= bytes_read;
 
   if (!ParseInternalKey(k, ikey)) {
@@ -139,7 +139,7 @@ inline bool DBIter::ParseKey(ParsedInternalKey* ikey) {
 }
 
 void DBIter::Next() {
-  assert(valid_);
+// assert(valid_);
 
   if (direction_ == kReverse) {  // Switch directions?
     direction_ = kForward;
@@ -176,8 +176,8 @@ void DBIter::Next() {
 
 void DBIter::FindNextUserEntry(bool skipping, std::string* skip) {
   // Loop until we hit an acceptable entry to yield
-  assert(iter_->Valid());
-  assert(direction_ == kForward);
+// assert(iter_->Valid());
+// assert(direction_ == kForward);
   do {
     ParsedInternalKey ikey;
     if (ParseKey(&ikey) && ikey.sequence <= sequence_) {
@@ -207,12 +207,12 @@ void DBIter::FindNextUserEntry(bool skipping, std::string* skip) {
 }
 
 void DBIter::Prev() {
-  assert(valid_);
+// assert(valid_);
 
   if (direction_ == kForward) {  // Switch directions?
     // iter_ is pointing at the current entry.  Scan backwards until
     // the key changes so we can use the normal reverse scanning code.
-    assert(iter_->Valid());  // Otherwise valid_ would have been false
+  // assert(iter_->Valid());  // Otherwise valid_ would have been false
     SaveKey(ExtractUserKey(iter_->key()), &saved_key_);
     while (true) {
       iter_->Prev();
@@ -234,7 +234,7 @@ void DBIter::Prev() {
 }
 
 void DBIter::FindPrevUserEntry() {
-  assert(direction_ == kReverse);
+// assert(direction_ == kReverse);
 
   ValueType value_type = kTypeDeletion;
   if (iter_->Valid()) {

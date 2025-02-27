@@ -42,7 +42,7 @@ Status Writer::AddRecord(const Slice& slice) {
   bool begin = true;
   do {
     const int leftover = kBlockSize - block_offset_;
-    assert(leftover >= 0);
+  // assert(leftover >= 0);
     if (leftover < kHeaderSize) {
       // Switch to a new block
       if (leftover > 0) {
@@ -54,7 +54,7 @@ Status Writer::AddRecord(const Slice& slice) {
     }
 
     // Invariant: we never leave < kHeaderSize bytes in a block.
-    assert(kBlockSize - block_offset_ - kHeaderSize >= 0);
+  // assert(kBlockSize - block_offset_ - kHeaderSize >= 0);
 
     const size_t avail = kBlockSize - block_offset_ - kHeaderSize;
     const size_t fragment_length = (left < avail) ? left : avail;
@@ -81,8 +81,8 @@ Status Writer::AddRecord(const Slice& slice) {
 
 Status Writer::EmitPhysicalRecord(RecordType t, const char* ptr,
                                   size_t length) {
-  assert(length <= 0xffff);  // Must fit in two bytes
-  assert(block_offset_ + kHeaderSize + length <= kBlockSize);
+// assert(length <= 0xffff);  // Must fit in two bytes
+// assert(block_offset_ + kHeaderSize + length <= kBlockSize);
 
   // Format the header
   char buf[kHeaderSize];

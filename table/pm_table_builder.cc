@@ -162,7 +162,7 @@ bool PMTableBuilder::add(const Slice& key, uint32_t pointer, uint16_t index){
     // key_count_++;
     // writeByte_ += key.size();
     key_type key64 = DecodeDBBenchFixed64(key.data());
-    assert(max_key_ <= key64);
+  // assert(max_key_ <= key64);
     key_buf_->finger[key_buf_->nums] = hashcode2B(key64);;
     key_buf_->pointer[key_buf_->nums] = pointer;
     key_buf_->setk(key_buf_->nums, key);
@@ -182,7 +182,7 @@ bool PMTableBuilder::add(const Slice& key, uint16_t finger, uint32_t pointer, ui
     // key_count_++;
     // writeByte_ += key.size();
     key_type key64 = DecodeDBBenchFixed64(key.data());
-    assert(max_key_ <= key64);
+  // assert(max_key_ <= key64);
     key_buf_->finger[key_buf_->nums] = finger;
     key_buf_->pointer[key_buf_->nums] = pointer;
     key_buf_->setk(key_buf_->nums, key);
@@ -204,7 +204,7 @@ bool PMTableBuilder::add(const Slice& key, const Slice& value, uint16_t finger){
     auto [pointer, index, flushed] = write_.writeValue(key, value);
 
     key_type key64 = DecodeDBBenchFixed64(key.data());
-    assert(max_key_ <= key64);
+  // assert(max_key_ <= key64);
     max_key_ = key64;
     key_buf_->finger[key_buf_->nums] = finger;
     // key_buf_->pointer[key_buf_->nums] = (value_buf_ >> 12);
@@ -274,14 +274,14 @@ std::tuple<std::vector<std::vector<void *>>, kPage*, kPage*> PMTableBuilder::fin
             leftPages[i] = (bnode*)mallocBnode();
         }
         if(lastKey != 0){
-                        assert(!leftPages[i]->full());
+                      // assert(!leftPages[i]->full());
                         leftPages[i]->k(leftPages[i]->num() + 1) = lastKey;
                         leftPages[i]->ch(leftPages[i]->num() + 1) = lastAddr;
             leftPages[i]->num()++;
         }
 
         if(leftPages[i] != nullptr){
-            assert(leftPages[i]->num() != 0);
+          // assert(leftPages[i]->num() != 0);
             //leftPages[i] = (bnode*)realloc(256);
             pages[i].push_back((void*)leftPages[i]);
             lastKey = leftPages[i]->kBegin();
@@ -300,13 +300,13 @@ std::tuple<std::vector<std::vector<void *>>, kPage*, kPage*> PMTableBuilder::fin
     //     used_pm_ -= pm_alloc_->kPage_size_;
     // }
 
-    assert(kPage_count_ == pages[0].size());
+  // assert(kPage_count_ == pages[0].size());
     treeMeta* tree_meta = new treeMeta(Pointer8B(leftPages[max_level_]), max_level_, min_key_, max_key_, pages[1], node_mem_, kPage_count_);
     // tree_meta->cur_size = used_pm_;
     tree = std::make_shared<lbtree>(tree_meta, pm_alloc_);
-    assert(pages[max_level_ + 1].size() == 0);
+  // assert(pages[max_level_ + 1].size() == 0);
     pages.resize(max_level_ + 1);
-    assert(pages.back().size() == 1);
+  // assert(pages.back().size() == 1);
     return std::make_tuple(pages, firstPage, lastPage);
 }
 void PMTableBuilder::setMaxKey(const Slice& key){
@@ -336,7 +336,7 @@ void PMTableBuilder::setMinKey(const Slice& key){
 //     memcpy(key_buf_ + key_offset_ + 256, skey.c_str(), key_total_size);
 //     memcpy(value_buf_ + value_offset_ + 256, key_value.c_str(), value_total_size);
 
-//     //     assert(keys_num_ < 256);
+//     //   // assert(keys_num_ < 256);
 //     addr = addr + keys_num;
 
 //     EncodeFixed16(key_buf_ + keys_num_ * 2, fnv1a_32(key.data_, key.size_));

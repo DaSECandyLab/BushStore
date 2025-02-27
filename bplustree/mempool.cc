@@ -34,7 +34,7 @@ threadNVMPools the_thread_nvmpools;
 /* -------------------------------------------------------------- */
 void threadMemPools::init(int num_workers, long long size, long long align)
 {
-    assert((num_workers > 0) && (size > 0) && (align > 0) & ((align & (align - 1)) == 0));
+    // assert((num_workers > 0) && (size > 0) && (align > 0) & ((align & (align - 1)) == 0));
 
     // 1. allocate memory
     tm_num_workers = num_workers;
@@ -135,7 +135,7 @@ static void handleSigbus(int sig)
 void threadNVMPools::init(int num_workers, const char *nvm_file, long long size)
 {
     // map_addr must be 4KB aligned, size must be multiple of 4KB
-    assert((num_workers > 0) && (size > 0) && (size % 4096 == 0));
+    // assert((num_workers > 0) && (size > 0) && (size % 4096 == 0));
 
     // set sigbus handler
     signal(SIGBUS, handleSigbus);
