@@ -93,4 +93,12 @@ You can run `run_db_bench.sh` directly and it will generate the output directory
 
  - ycsbc/input/里的23指的是下一行有23个参数
 
- 
+# 改成100B Key的问题
+
+ - non-leaf node里需要与cache line对齐，一个cache line 64B，108B (key + pointer)就不可以对齐cache line，对内存不友好。
+
+ - leaf node里一个internal key 108B，无法与cache对齐，原来是16B，可以与cache对齐
+
+ - 108B在NVM上存在严重写放大，原来是256B放一堆16B，可以放满，现在256B放两个key，剩下空的放不了。
+
+ - kpage里256B metadata的finger设计在大key场景下效率极低。其metadata设计不适配于大key。
