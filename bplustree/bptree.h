@@ -36,16 +36,16 @@ namespace leveldb {
 /* In a non-leaf, there are NON_LEAF_KEY_NUM keys and NON_LEAF_KEY_NUM+1
  * child pointers.
  */
-#define NON_LEAF_KEY_NUM (NONLEAF_SIZE / (KEY_SIZE + POINTER_SIZE) - 1) //15
+#define NON_LEAF_KEY_NUM (NONLEAF_SIZE / (KEY_SIZE + POINTER_SIZE) - 1) //7 // TODO: WaLSM+
 
 /* In a leaf, there are 16B header, 14x16B entries, 2x8B sibling pointers.
  */
-#if LEAF_SIZE != 256
-#error "LB+-Tree requires leaf node size to be 256B."
-#endif
+// #if LEAF_SIZE != 256
+// #error "LB+-Tree requires leaf node size to be 256B."
+// #endif
 
-#define LEAF_KEY_NUM (30)
-#define LEAF_VALUE_NUM (60)
+#define LEAF_KEY_NUM (14) // TODO: WaLSM+
+#define LEAF_VALUE_NUM (30) // TODO: WaLSM+
 
 // at most 1 of the following 2 macros may be defined
 //#define NONTEMP

@@ -12,15 +12,15 @@
 #include <string>
 
 namespace leveldb {
-constexpr int VPAGE_CAPACITY = 512 * 1024;
+constexpr int VPAGE_CAPACITY = 256 * 1024; // TODO: WaLSM+
 constexpr int FLUSH_SIZE = 16 * 1024;
 constexpr bool NEW_WAL = false;
 constexpr int MAX_FILE_NUM = 2;
 constexpr int MAX_BNODE_NUM = 150;
-constexpr int TASK_COUNT = 8;
+constexpr int TASK_COUNT = 16; // TODO: WaLSM+
 constexpr int max_size = 64 * 1024;
 constexpr bool use_pm = true;
-constexpr double memory_rate = 0.75;
+constexpr double memory_rate = 0.60; // TODO: WaLSM+
 
 constexpr bool KV_SEPERATE = true; // must be true
 constexpr int STOP_GC_COUNT = 5;
