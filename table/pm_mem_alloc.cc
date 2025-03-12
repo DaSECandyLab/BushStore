@@ -181,7 +181,7 @@ void* PMMemAllocator::mallocPage(PageType type) {
 void PMMemAllocator::freePage(char* addr, PageType type) {
   std::lock_guard<std::mutex> lock(mutex_);
   size_t index = ((uint64_t)addr - base_addr) / options_.extent_size_;
-// assert(index < pages.size());
+assert(index < pages.size());
   pages[index]->freePage(addr);
 }
 
@@ -210,7 +210,7 @@ PMExtent* PMMemAllocator::NewExtent(PageType type) {
     pages.push_back(pe);
     Vpage_.push_back(pe);
   }
-// assert(pe->page_start_addr_ + pe->page_count_ * pe->page_size_ <= (char*)getAbsoluteAddr(((uint64_t)cur_extent_id + 1) * options_.extent_size_));
+assert(pe->page_start_addr_ + pe->page_count_ * pe->page_size_ <= (char*)getAbsoluteAddr(((uint64_t)cur_extent_id + 1) * options_.extent_size_));
   return pe;
 }
 

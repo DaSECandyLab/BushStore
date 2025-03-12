@@ -32,41 +32,41 @@ std::tuple<key_type, key_type> reverseAndCheckNode(int level, bnode *p){
     key_type maxV = 0;
     if(level == 1){
         kPage *next;
-        // assert(p->check());
+        assert(p->check());
         key_type preleft = -1;
         key_type preright = -1;
         for(int i = 1; i <= p->num(); i++){
             next = p->ch(i);
             key_type left = next->minRawKey();
             key_type right = next->maxRawKey();
-            // assert(p->k(i) <= left);
+            assert(p->k(i) <= left);
             if(preleft != -1){
-                // assert(preright <= left);
+                assert(preright <= left);
             }
             minV = std::min(minV, left);
             maxV = std::max(maxV, right);
             preleft = left; 
             preright = right;
         }
-        // assert(minV <= maxV);
+        assert(minV <= maxV);
         return std::make_tuple(minV, maxV);
     }else{
         bnode *next;
-        // assert(p->check());
+        assert(p->check());
         key_type preleft = -1;
         key_type preright = -1;
         for(int i = 1; i <= p->num(); i++){
             next = p->ch(i);
             auto [left, right] = reverseAndCheckNode(level - 1, next);
             if(preright != -1){
-                // assert(preright <= left);
+                assert(preright <= left);
             }
             minV = std::min(minV, left);
             maxV = std::max(maxV, right);
             preleft = left; 
             preright = right;
         }
-        // assert(minV <= maxV);
+        assert(minV <= maxV);
         return std::make_tuple(minV, maxV);
     }
 }
@@ -74,7 +74,7 @@ std::tuple<key_type, key_type> reverseAndCheckNode(int level, bnode *p){
 void lbtree::reverseAndCheck() {
     bnode *p = tree_meta->tree_root;
     bnode *next;
-    // assert(p->check());
+    assert(p->check());
     key_type preleft = -1;
     key_type preright = -1;
     key_type minK = UINT64_MAX;
@@ -83,7 +83,7 @@ void lbtree::reverseAndCheck() {
         next = p->ch(i);
         auto [left, right] = reverseAndCheckNode(tree_meta->root_level - 1, next);
         if(preleft != -1){
-            // assert(preright <= left);
+            assert(preright <= left);
         }
         preleft = left;
         preright = right;
@@ -96,17 +96,17 @@ void lbtree::reverseAndCheck() {
 void lbtree::checkIterator(){
     int pageCount = 0;
     kPage* page = getKpage(tree_meta->min_key, true);
-    // assert(tree_meta->min_key <= page->minRawKey());
+    assert(tree_meta->min_key <= page->minRawKey());
     printf("check star : %lu", page->minRawKey());
     pageCount++;
     kPage* nextKpage;
     while(page->nextPage() != nullptr){
         nextKpage = page->nextPage();
-        // assert(page->maxRawKey() <= nextKpage->minRawKey());
+        assert(page->maxRawKey() <= nextKpage->minRawKey());
         page = nextKpage;
         pageCount++;
     }
-    // assert(page->maxRawKey() <= tree_meta->max_key);
+    assert(page->maxRawKey() <= tree_meta->max_key);
     printf(" page count :%d, end star : %lu\n", pageCount, page->maxRawKey());
 }
 
@@ -279,7 +279,7 @@ Again1:
         // prefetch the entire node
         NODE_PREF(p);
     #endif
-        // assert(p->lock() == 0 || p->lock() == 1);
+        assert(p->lock() == 0 || p->lock() == 1);
         // if the lock bit is set, abort
         if (p->lock())
         {
@@ -377,7 +377,7 @@ std::vector<std::vector<void*>> lbtree::getOverlappingMulTask(
             // prefetch the entire node
             NODE_PREF(p);
 #endif
-            // assert(p->lock() == 0 || p->lock() == 1);
+            assert(p->lock() == 0 || p->lock() == 1);
             // if the lock bit is set, abort
             if (p->lock()) {
                 // _xabort(3);
@@ -440,15 +440,15 @@ std::vector<std::vector<void*>> lbtree::getOverlappingMulTask(
             if(ppos[1] > 1){
                 kBegin = ((bnode *)parray[1])->ch(ppos[1] - 1);
             }else{
-                // assert(start_key - 1 < start_key);
+                assert(start_key - 1 < start_key);
                 kBegin = getKpage(start_key - 1, true);
-                // assert(kBegin != nullptr);
-                // assert(kBegin->nextPage() == ((bnode *)parray[1])->ch(ppos[1]));
+                assert(kBegin != nullptr);
+                assert(kBegin->nextPage() == ((bnode *)parray[1])->ch(ppos[1]));
             }
         }else if(start_key > ((bnode *)parray[1])->k(ppos[1])){
             kBegin = ((bnode *)parray[1])->ch(ppos[1]);
         }else{
-            // assert(false);
+            assert(false);
         }
 
         int need_task_count = TASK_COUNT - sst_count;
@@ -468,8 +468,8 @@ std::vector<std::vector<void*>> lbtree::getOverlappingMulTask(
         if sst_end > end_key. sst_end_index = -1.
         if sst_end_index != -1, we read more bnode.
         */
-        // // assert(start_key <= sst_start);
-        // // assert(sst_start <= sst_end);
+        // assert(start_key <= sst_start);
+        // assert(sst_start <= sst_end);
         while (true) {
             // 1. current bnode. bnode already in page_addr.
             key_type& begin = ((bnode*)parray[1])->kBegin();
@@ -525,7 +525,7 @@ std::vector<std::vector<void*>> lbtree::getOverlappingMulTask(
         if(new_start_key > tree_meta->max_key){
             kEnd = nullptr;
         }else{
-            // // assert(new_start_key != -1);
+            // assert(new_start_key != -1);
             kEnd = getKpage(new_start_key, false);
         }
     }
@@ -580,7 +580,7 @@ std::vector<std::vector<void*>> lbtree::getOverlappingMulTask(
 //             // prefetch the entire node
 //             NODE_PREF(p);
 //         #endif
-//             // assert(p->lock() == 0 || p->lock() == 1);
+//             assert(p->lock() == 0 || p->lock() == 1);
 //             // if the lock bit is set, abort
 //             if (p->lock())
 //             {
@@ -822,7 +822,7 @@ std::vector<std::vector<void *>> lbtree::getOverlapping(key_type start, key_type
             // prefetch the entire node
             NODE_PREF(p);
         #endif
-            // assert(p->lock() == 0 || p->lock() == 1);
+            assert(p->lock() == 0 || p->lock() == 1);
             // if the lock bit is set, abort
             if (p->lock())
             {
@@ -886,22 +886,22 @@ std::vector<std::vector<void *>> lbtree::getOverlapping(key_type start, key_type
 
         *ret_start = ((bnode *)parray[1])->k(ppos[1]);
         *index_start_pos = ppos[1];
-        // // assert(*ret_start <= start);
+        // assert(*ret_start <= start);
                 if(start <= tree_meta->min_key){
             kBegin = nullptr;
                 }else if(start == ((bnode *)parray[1])->k(ppos[1])){
             if(ppos[1] > 1){
                 kBegin = ((bnode *)parray[1])->ch(ppos[1] - 1);
             }else{
-                // assert(start - 1 < start);
+                assert(start - 1 < start);
                 kBegin = getKpage(start - 1, true);
-                // assert(kBegin != nullptr);
-                // assert(kBegin->nextPage() == ((bnode *)parray[1])->ch(ppos[1]));
+                assert(kBegin != nullptr);
+                assert(kBegin->nextPage() == ((bnode *)parray[1])->ch(ppos[1]));
             }
         }else if(start > ((bnode *)parray[1])->k(ppos[1])){
             kBegin = ((bnode *)parray[1])->ch(ppos[1]);
         }else{
-            // assert(false);
+            assert(false);
         }
 
         // if(*ret_start < start){
@@ -952,7 +952,7 @@ std::vector<std::vector<void *>> lbtree::getOverlapping(key_type start, key_type
         if(end >= tree_meta->max_key){
             kEnd = nullptr;
         }else{
-            // assert(end < end + 1);
+            assert(end < end + 1);
             kEnd = getKpage(end + 1, false);
         }
     }
@@ -986,7 +986,7 @@ bnode* splitNode(bnode* node, int idx){
 bnode* splitNode(bnode* node, int start, int end, int skip){
     bnode* newNode = (bnode*)calloc(1, 256);
     int newCount = skip + node->num() - end + 1;
-    // assert(newCount < NON_LEAF_KEY_NUM);
+    assert(newCount < NON_LEAF_KEY_NUM);
     for(int i = end; i <= node->num(); i++){
         newNode->k(i - end + skip + 1) = node->k(i);
         newNode->ch(i - end + skip + 1) = node->ch(i);
@@ -1233,7 +1233,7 @@ void lbtree::rangeReplace(std::vector<std::vector<void*>>& pages, std::vector<st
                         newNode = splitNode(node, first, last, 0);
                     }
                                 }else if(i == new_pages.size() - 1){
-                    // assert(new_pages.back().size() == 1);
+                    assert(new_pages.back().size() == 1);
                     bnode * new_node = (bnode *)new_pages.back().front();
                                         int left = NON_LEAF_KEY_NUM - (first - 1);                      int splitCount = newSplit.ch != 0 ? 1 : 0;
                     if(new_node->num() + splitCount> left){                         newNode = splitNode(node, first, last, new_node->num() + splitCount - left);
@@ -1267,7 +1267,7 @@ void lbtree::rangeReplace(std::vector<std::vector<void*>>& pages, std::vector<st
                             newNode->setKandCh(1, newRoot.k, newRoot.ch);
                             newNode->setKandCh(2, newSplit.k, newSplit.ch);
                         }else{
-                                                        // assert(false);
+                                                        assert(false);
                         }
                         newRoot.ch = 0;
                         newSplit.ch = 0;
@@ -1276,7 +1276,7 @@ void lbtree::rangeReplace(std::vector<std::vector<void*>>& pages, std::vector<st
                             node->setKandCh(first, newRoot.k, newRoot.ch);
                             node->remove(first + 1, last);
                         }else{
-                            // assert(last == first);
+                            assert(last == first);
                             if(!node->full()){
                                 node->insert(first, newRoot.k, newRoot.ch);
                             }else{
@@ -1291,7 +1291,7 @@ void lbtree::rangeReplace(std::vector<std::vector<void*>>& pages, std::vector<st
                                                 node->setKandCh(first, newSplit.k, newSplit.ch);
                         node->remove(first + 1, last);
                     }else{
-                                                // assert(last == first);
+                                                assert(last == first);
                         if(!node->full()){
                             node->insert(first, newSplit.k, newSplit.ch);
                         }else{
@@ -1311,7 +1311,7 @@ void lbtree::rangeReplace(std::vector<std::vector<void*>>& pages, std::vector<st
             }
         }else{
                         node->num() = node->search(start) - 1;
-            // assert(node->num() >= 0);
+            assert(node->num() >= 0);
             if(node->num() == 0){
                 free(node);
             }else if(newRoot.ch != 0 && !node->full()){
@@ -1391,11 +1391,11 @@ void lbtree::rangeReplace(std::vector<std::vector<void*>>& pages, std::vector<st
             }else if(lastNode->kEnd() < oldRoot->k(1)){
                 lastNode->insert(lastNode->num() + 1, oldRoot->k(1), (void*)oldRoot);;
             }else{
-                // assert(false);
+                assert(false);
             }
         }
         if(newSplit.ch != 0){
-            // assert(newSplit.k > lastNode->kEnd());
+            assert(newSplit.k > lastNode->kEnd());
             lastNode->insert(lastNode->num() + 1, newSplit.k, newSplit.ch);
         }
         tree_meta->tree_root = new_pages.back().back();
@@ -1442,7 +1442,7 @@ Again1:
         // prefetch the entire node
         NODE_PREF(p);
     #endif
-        // assert(p->lock() == 0 || p->lock() == 1);
+        assert(p->lock() == 0 || p->lock() == 1);
         // if the lock bit is set, abort
         if (p->lock())
         {

@@ -61,7 +61,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
     }
 
     if (!s.ok()) {
-    // assert(table == nullptr);
+    assert(table == nullptr);
       delete file;
       // We do not cache error results so that if the error is transient,
       // or somebody repairs the file, we recover automatically.

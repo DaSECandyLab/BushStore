@@ -20,7 +20,7 @@ FilterBlockBuilder::FilterBlockBuilder(const FilterPolicy* policy)
 
 void FilterBlockBuilder::StartBlock(uint64_t block_offset) {
   uint64_t filter_index = (block_offset / kFilterBase);
-// assert(filter_index >= filter_offsets_.size());
+assert(filter_index >= filter_offsets_.size());
   while (filter_index > filter_offsets_.size()) {
     GenerateFilter();
   }

@@ -53,7 +53,7 @@ class MergingIterator : public Iterator {
   }
 
   void Next() override {
-  // assert(Valid());
+  assert(Valid());
 
     // Ensure that all children are positioned after key().
     // If we are moving in the forward direction, it is already
@@ -79,7 +79,7 @@ class MergingIterator : public Iterator {
   }
 
   void Prev() override {
-  // assert(Valid());
+  assert(Valid());
 
     // Ensure that all children are positioned before key().
     // If we are moving in the reverse direction, it is already
@@ -108,12 +108,12 @@ class MergingIterator : public Iterator {
   }
 
   Slice key() const override {
-  // assert(Valid());
+  assert(Valid());
     return current_->key();
   }
 
   Slice value() const override {
-  // assert(Valid());
+  assert(Valid());
     return current_->value();
   }
 
@@ -178,7 +178,7 @@ void MergingIterator::FindLargest() {
 
 Iterator* NewMergingIterator(const Comparator* comparator, Iterator** children,
                              int n) {
-// assert(n >= 0);
+assert(n >= 0);
   if (n == 0) {
     return NewEmptyIterator();
   } else if (n == 1) {

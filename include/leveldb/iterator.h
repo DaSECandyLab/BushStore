@@ -89,7 +89,7 @@ class LEVELDB_EXPORT Iterator {
     bool IsEmpty() const { return function == nullptr; }
     // Invokes the cleanup function.
     void Run() {
-    // assert(function != nullptr);
+    assert(function != nullptr);
       (*function)(arg1, arg2);
     }
 

@@ -151,13 +151,13 @@ struct SkipList<Key, Comparator>::Node {
   // Accessors/mutators for links.  Wrapped in methods so we can
   // add the appropriate barriers as necessary.
   Node* Next(int n) {
-  // assert(n >= 0);
+  assert(n >= 0);
     // Use an 'acquire load' so that we observe a fully initialized
     // version of the returned Node.
     return next_[n].load(std::memory_order_acquire);
   }
   void SetNext(int n, Node* x) {
-  // assert(n >= 0);
+  assert(n >= 0);
     // Use a 'release store' so that anybody who reads through this
     // pointer observes a fully initialized version of the inserted node.
     next_[n].store(x, std::memory_order_release);
@@ -165,11 +165,11 @@ struct SkipList<Key, Comparator>::Node {
 
   // No-barrier variants that can be safely used in a few locations.
   Node* NoBarrier_Next(int n) {
-  // assert(n >= 0);
+  assert(n >= 0);
     return next_[n].load(std::memory_order_relaxed);
   }
   void NoBarrier_SetNext(int n, Node* x) {
-  // assert(n >= 0);
+  assert(n >= 0);
     next_[n].store(x, std::memory_order_relaxed);
   }
 
@@ -199,13 +199,13 @@ inline bool SkipList<Key, Comparator>::Iterator::Valid() const {
 
 template <typename Key, class Comparator>
 inline const Key& SkipList<Key, Comparator>::Iterator::key() const {
-// assert(Valid());
+assert(Valid());
   return node_->key;
 }
 
 template <typename Key, class Comparator>
 inline void SkipList<Key, Comparator>::Iterator::Next() {
-// assert(Valid());
+assert(Valid());
   node_ = node_->Next(0);
 }
 
@@ -213,7 +213,7 @@ template <typename Key, class Comparator>
 inline void SkipList<Key, Comparator>::Iterator::Prev() {
   // Instead of using explicit "prev" links, we just search for the
   // last node that falls before key.
-// assert(Valid());
+assert(Valid());
   node_ = list_->FindLessThan(node_->key);
   if (node_ == list_->head_) {
     node_ = nullptr;
@@ -246,8 +246,8 @@ int SkipList<Key, Comparator>::RandomHeight() {
   while (height < kMaxHeight && ((rnd_.Next() % kBranching) == 0)) {
     height++;
   }
-// assert(height > 0);
-// assert(height <= kMaxHeight);
+assert(height > 0);
+assert(height <= kMaxHeight);
   return height;
 }
 
@@ -286,7 +286,7 @@ SkipList<Key, Comparator>::FindLessThan(const Key& key) const {
   Node* x = head_;
   int level = GetMaxHeight() - 1;
   while (true) {
-  // assert(x == head_ || compare_(x->key, key) < 0);
+  assert(x == head_ || compare_(x->key, key) < 0);
     Node* next = x->Next(level);
     if (next == nullptr || compare_(next->key, key) >= 0) {
       if (level == 0) {
@@ -341,7 +341,7 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
   Node* x = FindGreaterOrEqual(key, prev);
 
   // Our data structure does not allow duplicate insertion
-// assert(x == nullptr || !Equal(key, x->key));
+assert(x == nullptr || !Equal(key, x->key));
 
   int height = RandomHeight();
   if (height > GetMaxHeight()) {

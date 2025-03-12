@@ -45,17 +45,17 @@ class SnapshotList {
 
   bool empty() const { return head_.next_ == &head_; }
   SnapshotImpl* oldest() const {
-  // assert(!empty());
+  assert(!empty());
     return head_.next_;
   }
   SnapshotImpl* newest() const {
-  // assert(!empty());
+  assert(!empty());
     return head_.prev_;
   }
 
   // Creates a SnapshotImpl and appends it to the end of the list.
   SnapshotImpl* New(SequenceNumber sequence_number) {
-  // assert(empty() || newest()->sequence_number_ <= sequence_number);
+  assert(empty() || newest()->sequence_number_ <= sequence_number);
 
     SnapshotImpl* snapshot = new SnapshotImpl(sequence_number);
 
@@ -78,7 +78,7 @@ class SnapshotList {
   // which is in the API, and currently takes a const Snapshot.
   void Delete(const SnapshotImpl* snapshot) {
 #if !defined(NDEBUG)
-  // assert(snapshot->list_ == this);
+  assert(snapshot->list_ == this);
 #endif  // !defined(NDEBUG)
     snapshot->prev_->next_ = snapshot->next_;
     snapshot->next_->prev_ = snapshot->prev_;

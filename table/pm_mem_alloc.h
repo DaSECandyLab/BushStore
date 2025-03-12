@@ -77,7 +77,7 @@ public:
       char* addr = page_start_addr_ + i * page_size_;
       free_lists_.push_back(addr);
     }
-  // assert(pmem_addr_ + bitmap_->nums_ / 8 + 8 < page_start_addr_);
+  assert(pmem_addr_ + bitmap_->nums_ / 8 + 8 < page_start_addr_);
   }
   std::vector<void*> getNewPage(uint64_t kvCount){
     std::vector<void*> res;
@@ -89,7 +89,7 @@ public:
       used_count_++;
       res.push_back(ret);
     }
-  // assert(page_count_ - used_count_ == free_lists_.size());
+  assert(page_count_ - used_count_ == free_lists_.size());
     return res;
   }
   char* getNewPage() {
@@ -104,9 +104,9 @@ public:
     // if( (uint64_t)ret == (uint64_t)0x555589cfb800){
     //   std::cout<<"malloc"<<std::endl;
     // }
-  // assert(page_count_ >= used_count_);
+  assert(page_count_ >= used_count_);
     if(free_lists_.empty()){
-    // assert(page_count_ - used_count_ == free_lists_.size());
+    assert(page_count_ - used_count_ == free_lists_.size());
       return nullptr;
     }
     char* ret = free_lists_.front();
@@ -114,7 +114,7 @@ public:
     int index = (ret - page_start_addr_) / page_size_;
     bitmap_->set(index);
     used_count_++;
-  // assert(page_count_ - used_count_ == free_lists_.size());
+  assert(page_count_ - used_count_ == free_lists_.size());
     return ret;
   }
   void freePage(char* page_addr) {
@@ -125,9 +125,9 @@ public:
     free_lists_.push_back(addr);
     bitmap_->clr((addr - page_start_addr_) / page_size_);
     used_count_--;
-  // assert(used_count_ >= 0);
-  // assert(page_count_ >= used_count_);
-  // assert(page_count_ - used_count_ == free_lists_.size());
+  assert(used_count_ >= 0);
+  assert(page_count_ >= used_count_);
+  assert(page_count_ - used_count_ == free_lists_.size());
   }
   bool isFull() { return used_count_ == page_count_; }
   ~PMExtent() {}

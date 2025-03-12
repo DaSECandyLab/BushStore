@@ -142,7 +142,7 @@ struct kPage{
     }
     void setk(size_t index, leveldb::Slice key){
         // keys[index * 3] = key.size();
-        // // assert(key.size() == 16);
+        // assert(key.size() == 16);
         memcpy(keys + index * 16, key.data(), 16);
     }
     kPage* nextPage(){
@@ -155,15 +155,15 @@ struct kPage{
         return key == DecodeDBBenchFixed64(keys + index * 16);
     }
     key_type minRawKey(){
-        // assert(nums > 0);
+        assert(nums > 0);
         return rawK(0);
     }
     key_type maxRawKey(){
-        // assert(nums > 0);
+        assert(nums > 0);
         return rawK(nums - 1);
     }
     key_type findLargeThen(key_type &key){
-        // assert(key < maxRawKey());
+        assert(key < maxRawKey());
         for(int i = 0;i < nums; i++){
             if(rawK(i) > key){
                 return rawK(i);
@@ -200,7 +200,7 @@ public:
 public:
     //1-15
     key_type &k(int idx) { return ent[idx].k; }
-    Pointer8B &ch(int idx) { // assert(idx != 0); return ent[idx].ch; }
+    Pointer8B &ch(int idx) { assert(idx != 0); return ent[idx].ch; }
 
     char *chEndAddr(int idx)
     {
@@ -224,10 +224,10 @@ public:
 
     void setkandCheck(int index, const key_type& key){
                 // if(index + 1 < num()){
-        //     // assert(k(index + 1) >= key);
+        //     assert(k(index + 1) >= key);
         // }
         // if(index - 1 >= 1){
-        //     // assert(k(index - 1) <= key);
+        //     assert(k(index - 1) <= key);
         // }
         k(index) = key;
     }
@@ -244,9 +244,9 @@ public:
         num()++;
     }
 
-    key_type &kBegin() { // assert(num() > 0); return ent[1].k; }
-    key_type &kEnd() { // assert(num() > 0); return ent[num()].k; }
-    key_type kRealEnd() { // assert(num() > 0); return ((kPage*)ent[num()].ch)->maxRawKey(); }
+    key_type &kBegin() { assert(num() > 0); return ent[1].k; }
+    key_type &kEnd() { assert(num() > 0); return ent[num()].k; }
+    key_type kRealEnd() { assert(num() > 0); return ((kPage*)ent[num()].ch)->maxRawKey(); }
     int search(key_type &key) {
         int first = 1;
         int last = num() + 1;
@@ -268,7 +268,7 @@ public:
     }
 
     bool check(){
-        // assert(num() <= NON_LEAF_KEY_NUM);
+        assert(num() <= NON_LEAF_KEY_NUM);
         for(int i = 1; i < num(); i++){
             if(k(i) > k(i + 1)){
                 return false;
@@ -298,7 +298,7 @@ struct vPage{
         return ((double)nums()) / capacity();
     }
     uint32_t& offset(size_t index){
-        // // assert(VPAGE_START_INDEX <= index && index < capacity());
+        // assert(VPAGE_START_INDEX <= index && index < capacity());
         size_t entryIndex = index / ONE_META_ENTRY_NUM;
         size_t metaIndex = index % ONE_META_ENTRY_NUM;
         return meta[entryIndex].offset[metaIndex];
@@ -318,8 +318,8 @@ struct vPage{
     //     return false;
     // }
     char* getValueAddr(size_t index){
-        // assert(VPAGE_START_INDEX <= index);
-        // // assert(VPAGE_START_INDEX <= index && index < capacity());
+        assert(VPAGE_START_INDEX <= index);
+        // assert(VPAGE_START_INDEX <= index && index < capacity());
         size_t entryIndex = index / ONE_META_ENTRY_NUM;
         size_t metaIndex = index % ONE_META_ENTRY_NUM;
         return (char*)((char*)this + meta[entryIndex].offset[metaIndex]);
@@ -327,7 +327,7 @@ struct vPage{
     leveldb::Slice v(size_t index){
         char* start = getValueAddr(index);
         uint32_t v_len = leveldb::DecodeFixed32(start + VPAGE_KEY_SIZE);
-        // // assert(v_len == 1000);
+        // assert(v_len == 1000);
         return leveldb::Slice(start + VPAGE_KEY_SIZE + 4, v_len);
     }
     bool isFull(int off, int index){
@@ -337,8 +337,8 @@ struct vPage{
         return false;
     }
     uint32_t setkv(size_t index, uint32_t off, const leveldb::Slice& key, const leveldb::Slice& value, bool flush){
-        // // assert(key.size() == 16);
-        // assert(off > VPAGE_KEY_SIZE + 4 + value.size());
+        // assert(key.size() == 16);
+        assert(off > VPAGE_KEY_SIZE + 4 + value.size());
         off -= (VPAGE_KEY_SIZE + 4 + value.size());
         memcpy((char*)this + off, key.data(), key.size());
         leveldb::EncodeFixed32((char*)this + off + VPAGE_KEY_SIZE, value.size());
@@ -348,17 +348,17 @@ struct vPage{
         return off;
     }
     void clrBitMap(int index){
-        // assert(VPAGE_START_INDEX <= index && index < capacity());
-        // assert(getBitMap(index));
-        // assert(nums() > 0);
+        assert(VPAGE_START_INDEX <= index && index < capacity());
+        assert(getBitMap(index));
+        assert(nums() > 0);
         nums()--;
         size_t entryIndex = index / ONE_META_ENTRY_NUM;
         size_t metaIndex = index % ONE_META_ENTRY_NUM;
         meta[entryIndex].bitmap &= (~(1ULL << metaIndex));
     }
     void setBitMap(int index){
-        // // assert(VPAGE_START_INDEX <= index && index < capacity());
-        // // assert(!getBitMap(index));
+        // assert(VPAGE_START_INDEX <= index && index < capacity());
+        // assert(!getBitMap(index));
         nums()++;
         size_t entryIndex = index / ONE_META_ENTRY_NUM;
         size_t metaIndex = index % ONE_META_ENTRY_NUM;
@@ -370,7 +370,7 @@ struct vPage{
     }
 
     bool getBitMap(int index){
-        // // assert(VPAGE_START_INDEX <= index && index < capacity());
+        // assert(VPAGE_START_INDEX <= index && index < capacity());
         size_t entryIndex = index / ONE_META_ENTRY_NUM;
         size_t metaIndex = index % ONE_META_ENTRY_NUM;
         return (meta[entryIndex].bitmap >> metaIndex) & 1;
@@ -386,7 +386,7 @@ struct vPage{
 //     uint32_t offset[LEAF_VALUE_NUM];
 //     char kvs[]; //4B size + value;
 //     char* getValueAddr(size_t index){
-//         // assert(index < alloc_num);
+//         assert(index < alloc_num);
 //         return (char *)((char*)this + offset[index]);
 //     }
 //     leveldb::Slice v(size_t index){
@@ -401,13 +401,13 @@ struct vPage{
 //         return off + 4 + value.size();
 //     }
 //     void clrBitMap(int index){
-//         // assert(index < alloc_num);
-//         // assert(getBitMap(index));
+//         assert(index < alloc_num);
+//         assert(getBitMap(index));
 //         bitmap = bitmap & (~(1ULL << index));
 //     }
 
 //     bool getBitMap(int index){
-//         // assert(index < alloc_num);
+//         assert(index < alloc_num);
 //         return (bitmap >> index) & 1;
 //     }
 // };
@@ -485,7 +485,7 @@ public:
     ~lbtree()
     {
         if (tree_meta->addr != nullptr) {
-            // assert(needFreeNodePages.size() == 0);
+            assert(needFreeNodePages.size() == 0);
             if(!TEST_BPTREE_NVM){
                 free(tree_meta->addr);
             }

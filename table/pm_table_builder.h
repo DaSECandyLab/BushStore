@@ -47,7 +47,7 @@ public:
     page_pm_->setNext(next_page_pm_);
     // pmem_persist(page_pm_,VPAGE_CAPACITY);
     //TODO add a finished flag and Integrity hash.
-  // assert(page_pm_->next() == next_page_pm_);
+  assert(page_pm_->next() == next_page_pm_);
     if(NEW_WAL){
       pmem_persist(page_pm_, lastWrite + FLUSH_SIZE);
     }else{
@@ -61,8 +61,8 @@ public:
     value_nums_ = 4;
   }
   std::tuple<uint32_t, uint16_t> writeValue(const Slice& key, const Slice& value){
-  // assert(page_pm_ != nullptr);
-    // assert(key.size() == 16);
+  assert(page_pm_ != nullptr);
+    assert(key.size() == 16);
     if(page_pm_->isFull(value_offset_ - (key.size() + 4 + value.size()), value_nums_)){
       flush_vpage();
     }
@@ -74,7 +74,7 @@ public:
       pmem_persist(page_pm_ + lastWrite - flush_block * FLUSH_SIZE, FLUSH_SIZE * (flush_block + 1));
       lastWrite -= (flush_block + 1) * FLUSH_SIZE;
     }
-  // assert(value_nums_ >= 4);
+  assert(value_nums_ >= 4);
     return std::make_tuple(pointer, value_nums_++);
   }
 private: 
@@ -111,7 +111,7 @@ public:
     }
   }
   void flush_vpage(){
-  // assert(page_buffer_->nums() + 4 == value_nums_);
+  assert(page_buffer_->nums() + 4 == value_nums_);
     page_buffer_->capacity() = value_nums_;
     writeByte_ += VPAGE_CAPACITY;
     if(pm_alloc_->options_.use_pm_){
@@ -124,8 +124,8 @@ public:
     value_nums_ = 4;
   }
   std::tuple<uint32_t, uint16_t, bool> writeValue(const Slice& key, const Slice& value){
-  // assert(page_pm_ != nullptr);
-    // assert(key.size() == 16);
+  assert(page_pm_ != nullptr);
+    assert(key.size() == 16);
     bool flushed = false;
     if(page_buffer_->isFull(value_offset_ - (key.size() + 4 + value.size()), value_nums_)){
       flush_vpage();
@@ -134,7 +134,7 @@ public:
     }
     uint32_t pointer = (reinterpret_cast<uint64_t>(getRelativeAddr(page_pm_)) >> 12);
     value_offset_ = page_buffer_->setkv(value_nums_, value_offset_, key, value, false);
-  // assert(value_nums_ >= 4);
+  assert(value_nums_ >= 4);
     return std::make_tuple(pointer, value_nums_++, flushed);
   }
   uint64_t getWriteByte() { return writeByte_; }

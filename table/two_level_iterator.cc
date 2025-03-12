@@ -30,11 +30,11 @@ class TwoLevelIterator : public Iterator {
 
   bool Valid() const override { return data_iter_.Valid(); }
   Slice key() const override {
-  // assert(Valid());
+  assert(Valid());
     return data_iter_.key();
   }
   Slice value() const override {
-  // assert(Valid());
+  assert(Valid());
     return data_iter_.value();
   }
   Status status() const override {
@@ -101,13 +101,13 @@ void TwoLevelIterator::SeekToLast() {
 }
 
 void TwoLevelIterator::Next() {
-// assert(Valid());
+assert(Valid());
   data_iter_.Next();
   SkipEmptyDataBlocksForward();
 }
 
 void TwoLevelIterator::Prev() {
-// assert(Valid());
+assert(Valid());
   data_iter_.Prev();
   SkipEmptyDataBlocksBackward();
 }

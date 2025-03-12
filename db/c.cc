@@ -145,7 +145,7 @@ struct leveldb_env_t {
 };
 
 static bool SaveError(char** errptr, const Status& s) {
-// assert(errptr != nullptr);
+assert(errptr != nullptr);
   if (s.ok()) {
     return false;
   } else if (*errptr == nullptr) {

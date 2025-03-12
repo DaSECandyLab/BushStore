@@ -66,7 +66,7 @@ void MemTable::Add2(SequenceNumber s, ValueType type, const Slice& key,
   p += 8;
   p = EncodeVarint32(p, val_size);
   std::memcpy(p, value.data(), val_size);
-// assert(p + val_size == buf + encoded_len);
+assert(p + val_size == buf + encoded_len);
   table_.Insert(buf);
 }
 
@@ -103,25 +103,25 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
   if(type != kTypeDeletion){
     // auto [pointer, index] = write_.writeValue(key, value);
     auto [pointer, index] = write_.writeValue(GetLengthPrefixedSlice(buf), value);
-  // assert(index >= 4);
+  assert(index >= 4);
     // auto check = [&](uint16_t index, uint32_t pointer){
     //     vPage* addr = (vPage*)getAbsoluteAddr(((uint64_t)pointer) << 12);
-    //   // assert(addr->v(index).size() == 4096);
+    //   assert(addr->v(index).size() == 4096);
     // };
     // check(index, pointer);
     EncodeFixed32(p, pointer);
     p+=4;
     EncodeFixed16(p, index);
-  // assert(p + 2 == buf + encoded_len);
+  assert(p + 2 == buf + encoded_len);
   }else{
     EncodeFixed32(p, 0);
     p+=4;
     EncodeFixed16(p, 0);
-  // assert(p + 2 == buf + encoded_len);
+  assert(p + 2 == buf + encoded_len);
   }
   // p = EncodeVarint32(p, val_size);
   // std::memcpy(p, value.data(), val_size);
-  // assert(p + val_size == buf + encoded_len);
+  assert(p + val_size == buf + encoded_len);
   table_.Insert(buf);
   kvCount_++;
 }

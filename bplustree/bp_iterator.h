@@ -75,7 +75,7 @@ public:
   // Valid() after this call iff the source is not empty.
   void SeekToLast() override {
     printf("SeekToLast is unsupported.\n");
-    // assert(false);
+    assert(false);
   }
 
   // Position at the first key in the source that is at or past target.
@@ -263,7 +263,7 @@ class BP_Iterator_Trim : public IteratorBTree {
         // do nothing
       } else {
         std::cout << "fault case" << std::endl;
-        // assert(false);
+        assert(false);
       }
     }
     for (int i = 1; i < kPages_.size() - 1; i++) {
@@ -315,7 +315,7 @@ class BP_Iterator_Trim : public IteratorBTree {
     }
     start_pos_index_ = pos_data_;
     skipKpage = kPages_.size() - 1;
-    // assert(skipKpage == 0 || skipKpage == 1);
+    assert(skipKpage == 0 || skipKpage == 1);
   };
 
   void SeekToLast() override{};
@@ -493,7 +493,7 @@ class BP_Iterator : public IteratorBTree {
         // do nothing
       } else {
         std::cout << "fault case" << std::endl;
-        // assert(false);
+        assert(false);
       }
     }
     for (int i = 1; i < kPages_.size() - 1; i++) {

@@ -14,8 +14,8 @@ namespace leveldb {
 
 void BlockHandle::EncodeTo(std::string* dst) const {
   // Sanity check that all fields have been set
-// assert(offset_ != ~static_cast<uint64_t>(0));
-// assert(size_ != ~static_cast<uint64_t>(0));
+assert(offset_ != ~static_cast<uint64_t>(0));
+assert(size_ != ~static_cast<uint64_t>(0));
   PutVarint64(dst, offset_);
   PutVarint64(dst, size_);
 }
@@ -35,7 +35,7 @@ void Footer::EncodeTo(std::string* dst) const {
   dst->resize(2 * BlockHandle::kMaxEncodedLength);  // Padding
   PutFixed32(dst, static_cast<uint32_t>(kTableMagicNumber & 0xffffffffu));
   PutFixed32(dst, static_cast<uint32_t>(kTableMagicNumber >> 32));
-// assert(dst->size() == original_size + kEncodedLength);
+assert(dst->size() == original_size + kEncodedLength);
   (void)original_size;  // Disable unused variable warning.
 }
 

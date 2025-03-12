@@ -24,7 +24,7 @@ Iterator::~Iterator() {
 }
 
 void Iterator::RegisterCleanup(CleanupFunction func, void* arg1, void* arg2) {
-// assert(func != nullptr);
+assert(func != nullptr);
   CleanupNode* node;
   if (cleanup_head_.IsEmpty()) {
     node = &cleanup_head_;
@@ -52,11 +52,11 @@ class EmptyIterator : public Iterator {
   void Next() override { assert(false); }
   void Prev() override { assert(false); }
   Slice key() const override {
-  // assert(false);
+  assert(false);
     return Slice();
   }
   Slice value() const override {
-  // assert(false);
+  assert(false);
     return Slice();
   }
   Status status() const override { return status_; }

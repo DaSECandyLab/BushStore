@@ -36,7 +36,7 @@ class MemTable {
   // Drop reference count.  Delete if no more references exist.
   void Unref() {
     --refs_;
-  // assert(refs_ >= 0);
+  assert(refs_ >= 0);
     if (refs_ <= 0) {
       delete this;
     }

@@ -166,7 +166,7 @@ class FaultInjectionTestEnv : public EnvWrapper {
 TestWritableFile::TestWritableFile(const FileState& state, WritableFile* f,
                                    FaultInjectionTestEnv* env)
     : state_(state), target_(f), writable_file_opened_(true), env_(env) {
-// assert(f != nullptr);
+assert(f != nullptr);
 }
 
 TestWritableFile::~TestWritableFile() {
@@ -319,7 +319,7 @@ Status FaultInjectionTestEnv::RenameFile(const std::string& s,
     }
 
     if (new_files_since_last_dir_sync_.erase(s) != 0) {
-    // assert(new_files_since_last_dir_sync_.find(t) ==
+    assert(new_files_since_last_dir_sync_.find(t) ==
              new_files_since_last_dir_sync_.end());
       new_files_since_last_dir_sync_.insert(t);
     }
@@ -480,7 +480,7 @@ class FaultInjectionTest : public testing::Test {
         ASSERT_LEVELDB_OK(env_->RemoveFilesCreatedAfterLastDirSync());
         break;
       default:
-      // assert(false);
+      assert(false);
     }
   }
 

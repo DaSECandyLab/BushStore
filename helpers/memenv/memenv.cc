@@ -43,7 +43,7 @@ class FileState {
     {
       MutexLock lock(&refs_mutex_);
       --refs_;
-    // assert(refs_ >= 0);
+    assert(refs_ >= 0);
       if (refs_ <= 0) {
         do_delete = true;
       }
@@ -82,7 +82,7 @@ class FileState {
       return Status::OK();
     }
 
-  // assert(offset / kBlockSize <= std::numeric_limits<size_t>::max());
+  assert(offset / kBlockSize <= std::numeric_limits<size_t>::max());
     size_t block = static_cast<size_t>(offset / kBlockSize);
     size_t block_offset = offset % kBlockSize;
     size_t bytes_to_copy = n;
