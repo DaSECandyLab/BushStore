@@ -234,21 +234,20 @@ inline std::string EncodeFixed64Reverse(uint64_t value) {
 }
 
 inline std::string CoreWorkload::BuildKeyName(uint64_t key_num) {
-  /*
+
   if (!ordered_inserts_) {
     key_num = utils::Hash(key_num);
   }
   return EncodeFixed64Reverse(key_num);
   // return std::string("user").append(std::to_string(key_num));
-  */
  
-  if (!ordered_inserts_) {
-    key_num = utils::Hash(key_num);
-  }
-  std::string prekey = "user";
-  std::string value = std::to_string(key_num);
-  int fill = std::max(0, key_size_ - 4 - static_cast<int>(value.size()));
-  return prekey.append(fill, '0').append(value);
+  // if (!ordered_inserts_) {
+  //   key_num = utils::Hash(key_num);
+  // }
+  // std::string prekey = "user";
+  // std::string value = std::to_string(key_num);
+  // int fill = std::max(0, key_size_ - 4 - static_cast<int>(value.size()));
+  // return prekey.append(fill, '0').append(value);
 }
 
 inline std::string CoreWorkload::NextFieldName() {

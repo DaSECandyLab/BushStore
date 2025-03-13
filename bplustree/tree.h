@@ -32,8 +32,8 @@
 /* ---------------------------------------------------------------------- */
 
 // the size of a tree node
-#define NONLEAF_LINE_NUM 2 // 128B // TODO: WaLSM+
-#define LEAF_LINE_NUM 2    // 128B // TODO: WaLSM+
+#define NONLEAF_LINE_NUM 4 // 256B // TODO: WaLSM+
+#define LEAF_LINE_NUM 4    // 256B // TODO: WaLSM+
 
 // the number of leaf nodes to prefetch ahead in jump pointer array
 // prefetching

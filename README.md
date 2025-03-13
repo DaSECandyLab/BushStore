@@ -97,6 +97,8 @@ You can run `run_db_bench.sh` directly and it will generate the output directory
 
  - directI/O 测试前好像需要echo 3 > /proc/sys/vm/drop_caches?
 
+ - 现在是8B key对1KB value，或许可以将value调大100B，来和100B key 1KB value对齐？
+
 <!-- # 改成100B Key的问题
 
  - non-leaf node里需要与cache line对齐，一个cache line 64B，108B (key + pointer)就不可以对齐cache line，对内存不友好。

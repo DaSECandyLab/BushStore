@@ -143,18 +143,18 @@ struct LEVELDB_EXPORT Options {
   const FilterPolicy* filter_policy = nullptr;
 
   // int bucket_nums = 0x1000000;
-  int bucket_nums = 64 * 1024 * 1024; // TODO: WaLSM+
+  int bucket_nums = 128 * 1024 * 1024; // TODO: WaLSM+
   // std::string pm_path_ = "/media/nvme/pm_test";
   std::string pm_path_ = "/mnt/pmem0.1/pm_test/";
   // size_t key_size_ = 8;
   // size_t value_size_ = 1000;
   uint64_t pm_size_ = 8ULL * 1024 * 1024 * 1024; // TODO: WaLSM+
-  uint64_t extent_size_ = 256 * 1024 * 1024; // TODO: WaLSM+
+  uint64_t extent_size_ = 512 * 1024 * 1024; // TODO: WaLSM+
   bool use_pm_ = true; // use PM or use DRAM as PM
   bool flush_ssd = true; // TODO: WaLSM+
   bool has_pm = true; // if it's false. then it's leveldb
   bool dynamic_tree = true;
-  double gc_ratio=0.2; // TODO: WaLSM+
+  double gc_ratio=0.4; // TODO: WaLSM+
 };
 
 // inline void* getRelativeAddr(void* addr){
