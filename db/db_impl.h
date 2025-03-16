@@ -268,6 +268,8 @@ private:
 public:
   ReadStats readStats_;
   WriteStats writeStats_;
+  // ReadMetric readMetric_;
+  // WriteMetric writeMetric_;
 };
 
 // Sanitize db options.  The caller should delete result.info_log if

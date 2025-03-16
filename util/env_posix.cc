@@ -35,6 +35,7 @@
 #include "port/thread_annotations.h"
 #include "util/env_posix_test_helper.h"
 #include "util/posix_logger.h"
+#include "util/global.h"
 
 namespace leveldb {
 
@@ -48,6 +49,8 @@ constexpr const int kDefaultMmapLimit = (sizeof(void*) >= 8) ? 1000 : 0;
 
 // Can be set using EnvPosixTestHelper::SetReadOnlyMMapLimit().
 int g_mmap_limit = kDefaultMmapLimit;
+
+static ReadMetric readMetric_;
 
 // Common flags defined for all posix open operations
 #if defined(HAVE_O_CLOEXEC)
@@ -184,6 +187,14 @@ class PosixRandomAccessFile final : public RandomAccessFile {
     Status status;
     ssize_t read_size = ::pread(fd, scratch, n, static_cast<off_t>(offset));
     *result = Slice(scratch, (read_size < 0) ? 0 : read_size);
+
+    uint64_t block_start = offset / 4096;
+    uint64_t block_end = (offset + read_size) / 4096;
+    if (EVALUATE_METRIC) {
+      readMetric_.ReadSsdBlocksCnt += (block_end - block_start + 1);
+      readMetric_.printMetric();
+    }
+
     if (read_size < 0) {
       // An error: return a non-ok status.
       status = PosixError(filename_, errno);
@@ -237,6 +248,14 @@ class PosixMmapReadableFile final : public RandomAccessFile {
     }
 
     *result = Slice(mmap_base_ + offset, n);
+
+    uint64_t block_start = offset / 4096;
+    uint64_t block_end = (offset + n) / 4096;
+    if (EVALUATE_METRIC) {
+      readMetric_.ReadSsdBlocksCnt += (block_end - block_start + 1);
+      readMetric_.printMetric();
+    }
+
     return Status::OK();
   }
 

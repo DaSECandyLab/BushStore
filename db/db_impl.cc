@@ -55,6 +55,8 @@ namespace leveldb {
 
 const int kNumNonTableCacheFiles = 10;
 
+static WriteMetric writeMetric_;
+
 // Information kept for every waiting writer
 struct DBImpl::Writer {
   explicit Writer(port::Mutex* mu)
@@ -208,6 +210,12 @@ DBImpl::~DBImpl() {
   }
   if (owns_cache_) {
     delete options_.block_cache;
+  }
+  if (EVALUATE_METRIC) {
+    std::cout << "Final Write Metric Result: " << std::endl;
+    writeMetric_.printMetric();
+    // std::cout << "Final Read Metric Result: " << std::endl;
+    // readMetric_.printMetric();
   }
 }
 
@@ -1383,7 +1391,9 @@ Status DBImpl::CompactionLevel1Concurrency(){
   };
   std::vector<Task> tasks;
   tasks.reserve(TASK_COUNT + 2);
-  
+  uint64_t flushKVcount = 0;
+  uint64_t flushKeySize = 8; // always 8B key
+  uint64_t flushValSize = 0;
   bool writeSeq = files.empty() ? true : false;
 
     std::shared_ptr<lbtree> tree;
@@ -1735,6 +1745,9 @@ Status DBImpl::CompactionLevel1Concurrency(){
           compact->current_output()->largest.DecodeFrom(key);
           assert(files.empty() || (DecodeDBBenchFixed64(key.data()) <= end_key && DecodeDBBenchFixed64(key.data()) >= start_key));
           compact->builder->Add(key, input->value());
+          if (EVALUATE_METRIC) {
+            flushValSize = std::max(flushValSize, input->value().size());
+          }
           // cuckoo_filter_->Delete(key, mergeIterator->fileNum());
           // cuckoo_filter_->Put(key, compact->out_file_number);
           // if(mergeIterator->fileNum() != compact->compaction->level() + 1){
@@ -1803,11 +1816,14 @@ Status DBImpl::CompactionLevel1Concurrency(){
     }
 
     for(int i = 0; i < tasks.size(); i++){
+      if (EVALUATE_METRIC) {
+        flushKVcount += tasks[i].it2->validKVcount();
+      }
       tasks[i].it2->releaseKVpage();
       // delete tasks[i].it3;
       // delete tasks[i].it2;
       // if(tasks[i].it2 != tasks[i].it){
-        delete tasks[i].it;
+      delete tasks[i].it;
       // }
     }
 
@@ -1832,6 +1848,9 @@ Status DBImpl::CompactionLevel1Concurrency(){
   for(const auto& c : states){
     for(const auto& file : c->outputs){
       stats.bytes_written += file.file_size;
+      if (EVALUATE_METRIC) {
+        writeMetric_.WriteSsdDataBytes += file.file_size;
+      }
     }
   }
   stats_[2].Add(stats);
@@ -1851,6 +1870,14 @@ Status DBImpl::CompactionLevel1Concurrency(){
   c->ReleaseInputs();
   RemoveObsoleteFiles();
   delete c;
+
+  if (EVALUATE_METRIC) {
+    writeMetric_.WriteValueSize = flushValSize;
+    writeMetric_.FlushSsdDataBytes += flushKVcount * (flushKeySize + flushValSize);
+
+    // writeMetric_.printMetric();
+  }
+  
   return Status::OK();
 }
 

@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <iostream>
 
 namespace leveldb {
 constexpr int VPAGE_CAPACITY = 256 * 1024; // TODO: WaLSM+
@@ -17,10 +18,10 @@ constexpr int FLUSH_SIZE = 16 * 1024;
 constexpr bool NEW_WAL = false;
 constexpr int MAX_FILE_NUM = 2;
 constexpr int MAX_BNODE_NUM = 150;
-constexpr int TASK_COUNT = 16; // TODO: WaLSM+
+constexpr int TASK_COUNT = 32; // TODO: WaLSM+
 constexpr int max_size = 64 * 1024;
 constexpr bool use_pm = true;
-constexpr double memory_rate = 0.60; // TODO: WaLSM+
+constexpr double memory_rate = 0.85; // TODO: WaLSM+
 
 constexpr bool KV_SEPERATE = true; // must be true
 constexpr int STOP_GC_COUNT = 5;
@@ -54,6 +55,7 @@ constexpr bool DEBUG_PRINT = true;
 constexpr bool TIME_ANALYSIS = true; // must be true, dynamic change B+Tree size reley on it
 constexpr bool READ_TIME_ANALYSIS = false;
 constexpr bool WRITE_TIME_ANALYSIS = false;
+constexpr bool EVALUATE_METRIC = true; // record evaluation metric for WaLSM paper
 
 constexpr bool SKIPLIST_NVM = false; // no use
 constexpr bool MALLO_CFLUSH = true;
@@ -150,6 +152,47 @@ struct WriteStats {
         "\n{L1TimeAVG} : " + std::to_string(avgL1Time) +
         "\n{L2TimeAVG} : " + std::to_string(avgL2Time);
     return s;
+  }
+};
+
+// metric of WaLSM write evaluation
+struct WriteMetric {
+  uint64_t WriteSsdDataBytes = 0;
+  // uint64_t ReadSsdPageCount = 0;
+  uint64_t FlushSsdDataBytes = 0;
+  uint64_t WriteValueSize = 0;
+
+  std::string getMetric() {
+    double WriteSsdDataGB = WriteSsdDataBytes * 1.0 / (1024 * 1024 * 1024);
+    double FlushSSdDataGB = FlushSsdDataBytes * 1.0 / (1024 * 1024 * 1024);
+    std::string s = "Write Metric analysis:";
+    s = s + " <WriteSSD> - " + std::to_string(WriteSsdDataGB) + " GB";
+    s = s + " <FlushSSD> - " + std::to_string(FlushSSdDataGB) + " GB";
+    s = s + " <ValueSize> - " + std::to_string(WriteValueSize) + " Bytes";
+    return s;
+  }
+
+  void printMetric() {
+    std::cout << getMetric() << std::endl;
+  }
+};
+
+// metric of WaLSM read evaluation
+struct ReadMetric {
+  uint64_t ReadSsdBlocksCnt = 0;
+  uint64_t LastPrintedCount = 0;
+
+  std::string getMetric() {
+    std::string s = "Read Metric analysis:";
+    s = s + " <ReadSSD> - " + std::to_string(ReadSsdBlocksCnt) + " Blocks";
+    return s;
+  }
+
+  void printMetric() {
+    if (ReadSsdBlocksCnt - LastPrintedCount > 1000 * 1000) {
+      LastPrintedCount = ReadSsdBlocksCnt;
+      std::cout << getMetric() << std::endl;
+    }
   }
 };
 

@@ -242,6 +242,14 @@ class BP_Iterator_Trim : public IteratorBTree {
     endKey = Slice(cendKey, 8);
   }
 
+  uint64_t validKVcount() {
+    uint64_t result = 0;
+    for (int i = 0; i < kPages_.size(); i++) {
+      result += ((kPage*)kPages_[i])->nums;
+    }
+    return result;
+  }
+
   void releaseKVpage() {
     // std::cout<< "free kPage from : " <<
     // ((kPage*)kPages_.front())->minRawKey() <<" to :" <<
