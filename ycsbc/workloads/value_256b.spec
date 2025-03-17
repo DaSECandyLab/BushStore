@@ -1,8 +1,8 @@
 fieldcount=1
 fieldlength=384
 
-recordcount=95526000
-operationcount=1342177280
+recordcount=80000000
+operationcount=1280000000
 workload=com.yahoo.ycsb.workloads.CoreWorkload
 
 readallfields=true
