@@ -6,7 +6,7 @@
 set(CMAKE_C_COMPILER /usr/local/bin/gcc)
 set(CMAKE_CXX_COMPILER /usr/local/bin/g++)
 
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 # Keep the version below in sync with the one in db.h
 project(leveldb VERSION 1.23.0 LANGUAGES C CXX)
 

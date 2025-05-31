@@ -1,3 +1,3 @@
 23
-./ycsbc -db leveldb -dbpath /mnt/nvme0n1/guoteng/BushStore -pmpath /home/guoteng_20241228_135/pmem1 -flushssd true -threads 8 -P workloads/value_4kb.spec -run true -dboption 1 -dbstatistics true -timeseries false -latency true
+./ycsbc -db leveldb -dbpath /mnt/nvme0n1/guoteng/BushStore -pmpath /mnt/pmem0.8/guoteng -flushssd true -threads 8 -P workloads/value_4kb.spec -run true -dboption 1 -dbstatistics true -timeseries false -latency true
 0

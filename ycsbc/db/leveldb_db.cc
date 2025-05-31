@@ -27,13 +27,13 @@ namespace ycsbc {
         options->create_if_missing = true;
         options->compression = leveldb::kNoCompression;
 
-        std::string pm_path = props.GetProperty("pmpath","/home/guoteng_20241228_135/pmem1");
+        std::string pm_path = props.GetProperty("pmpath","/mnt/pmem0.8/guoteng");
         options->pm_path_ = pm_path;
         options->flush_ssd = utils::StrToBool(props["flushssd"]);
         if(options->flush_ssd){
             options->pm_size_ = 8ULL * 1024 * 1024 * 1024; // pmem size 8GB
         }
-        options->filter_policy = leveldb::NewBloomFilterPolicy(10);
+        options->filter_policy = leveldb::NewBloomFilterPolicy(4);
         options->block_cache = leveldb::NewLRUCache(134217728); // 128MB
         // printf("set MioDB options!\n");
         // options->nvm_node = 0;
@@ -100,7 +100,40 @@ namespace ycsbc {
     }
 
     int LevelDB::Update(const std::string &table, const std::string &key, std::vector<KVPair> &values) {
-        return Insert(table,key,values);
+        std::string data;
+        leveldb::Status s = db_->Get(leveldb::ReadOptions(),key,&data);
+        if (s.IsNotFound()) {
+            noResult++;
+            return DB::kOK;
+        } else if (!s.ok()) {
+            // throw utils::Exception(std::string("RocksDB Get: ") + s.ToString());
+            cerr<<"update error"<<endl;
+            exit(0);
+        }
+
+        std::vector<KVPair> current_kvs;
+        DeSerializeValues(data, current_kvs);
+        for (auto &new_kv : values) {
+            bool found __attribute__((unused)) = false;
+            for (auto &cur_kv : current_kvs) {
+                if (cur_kv.first == new_kv.first) {
+                    found = true;
+                    cur_kv.second = new_kv.second;
+                    break;
+                }
+            }
+        }
+
+        leveldb::WriteOptions wopt;
+        data.clear();
+        SerializeValues(current_kvs, data);
+        s = db_->Put(wopt, key, data);
+        if (!s.ok()) {
+            cerr<<"update error"<<endl;
+            exit(0);
+        }
+        return DB::kOK;
+        // return Insert(table,key,values);
     }
 
     int LevelDB::Delete(const std::string &table, const std::string &key) {

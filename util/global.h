@@ -18,10 +18,10 @@ constexpr int FLUSH_SIZE = 16 * 1024;
 constexpr bool NEW_WAL = false;
 constexpr int MAX_FILE_NUM = 2;
 constexpr int MAX_BNODE_NUM = 150;
-constexpr int TASK_COUNT = 32; // TODO: WaLSM+
+constexpr int TASK_COUNT = 64; // TODO: WaLSM+
 constexpr int max_size = 64 * 1024;
 constexpr bool use_pm = true;
-constexpr double memory_rate = 0.85; // TODO: WaLSM+
+constexpr double memory_rate = 0.8; // TODO: WaLSM+
 
 constexpr bool KV_SEPERATE = true; // must be true
 constexpr int STOP_GC_COUNT = 5;

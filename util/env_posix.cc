@@ -191,7 +191,7 @@ class PosixRandomAccessFile final : public RandomAccessFile {
     uint64_t block_start = offset / 4096;
     uint64_t block_end = (offset + read_size) / 4096;
     if (EVALUATE_METRIC) {
-      readMetric_.ReadSsdBlocksCnt += (block_end - block_start + 1);
+      readMetric_.ReadSsdBlocksCnt += std::max(block_end-block_start, uint64_t(1));
       readMetric_.printMetric();
     }
 
@@ -252,7 +252,7 @@ class PosixMmapReadableFile final : public RandomAccessFile {
     uint64_t block_start = offset / 4096;
     uint64_t block_end = (offset + n) / 4096;
     if (EVALUATE_METRIC) {
-      readMetric_.ReadSsdBlocksCnt += (block_end - block_start + 1);
+      readMetric_.ReadSsdBlocksCnt += std::max(block_end-block_start, uint64_t(1));
       readMetric_.printMetric();
     }
 

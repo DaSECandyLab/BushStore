@@ -1,5 +1,5 @@
-fieldcount=1
-fieldlength=384
+fieldcount=10
+fieldlength=25
 
 recordcount=80000000
 operationcount=1280000000
