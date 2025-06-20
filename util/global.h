@@ -157,16 +157,16 @@ struct WriteStats {
 
 // metric of WaLSM write evaluation
 struct WriteMetric {
-  uint64_t WriteSsdDataBytes = 0;
+  // uint64_t WriteSsdDataBytes = 0;
   // uint64_t ReadSsdPageCount = 0;
   uint64_t FlushSsdDataBytes = 0;
   uint64_t WriteValueSize = 0;
 
   std::string getMetric() {
-    double WriteSsdDataGB = WriteSsdDataBytes * 1.0 / (1024 * 1024 * 1024);
+    // double WriteSsdDataGB = WriteSsdDataBytes * 1.0 / (1024 * 1024 * 1024);
     double FlushSSdDataGB = FlushSsdDataBytes * 1.0 / (1024 * 1024 * 1024);
     std::string s = "Write Metric analysis:";
-    s = s + " <WriteSSD> - " + std::to_string(WriteSsdDataGB) + " GB";
+    // s = s + " <WriteSSD> - " + std::to_string(WriteSsdDataGB) + " GB";
     s = s + " <FlushSSD> - " + std::to_string(FlushSSdDataGB) + " GB";
     s = s + " <ValueSize> - " + std::to_string(WriteValueSize) + " Bytes";
     return s;

@@ -1848,9 +1848,9 @@ Status DBImpl::CompactionLevel1Concurrency(){
   for(const auto& c : states){
     for(const auto& file : c->outputs){
       stats.bytes_written += file.file_size;
-      if (EVALUATE_METRIC) {
-        writeMetric_.WriteSsdDataBytes += file.file_size;
-      }
+      // if (EVALUATE_METRIC) {
+      //   writeMetric_.WriteSsdDataBytes += file.file_size;
+      // }
     }
   }
   stats_[2].Add(stats);
